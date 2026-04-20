@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGI-wiki Overview — v4.5.3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===================================================================
+   MAGI-WIKI OVERVIEW — NERV DEEP OPERATIONS CENTER
+   Production-grade dashboard v2.0 — 2026-04-17
+   =================================================================== */
+
+:root {
+  --bg:          #030711;
+  --bg2:         #0a1220;
+  --surface:     #0c1a2e;
+  --surface2:    #112240;
+  --surface3:    #162a4a;
+  --glass:       rgba(12,26,46,0.7);
+  --glass-border:rgba(40,80,140,0.18);
+  --border:      #152040;
+  --border-lit:  #1e3a6a;
+  --border-glow: #2a4a8a;
+
+  --text:        #e2e8f0;
+  --text-dim:    #8094b0;
+  --text-faint:  #4a5e7a;
+  --text-bright: #f8fafc;
+
+  --amber:       #f0a830;
+  --amber-soft:  #e8b860;
+  --amber-dim:   rgba(240,168,48,0.10);
+  --amber-glow:  rgba(240,168,48,0.35);
+  --amber-vivid: rgba(240,168,48,0.6);
+
+  --cyan:        #00d4ff;
+  --cyan-soft:   #40d8f0;
+  --cyan-dim:    rgba(0,212,255,0.08);
+  --cyan-glow:   rgba(0,212,255,0.30);
+  --cyan-vivid:  rgba(0,212,255,0.55);
+
+  --green:       #00e88a;
+  --green-dim:   rgba(0,232,138,0.08);
+  --green-glow:  rgba(0,232,138,0.35);
+
+  --red:         #ff4060;
+  --red-dim:     rgba(255,64,96,0.08);
+
+  --violet:      #8a60ff;
+  --violet-dim:  rgba(138,96,255,0.08);
+  --violet-glow: rgba(138,96,255,0.30);
+
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Noto Sans KR', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  overflow-x: hidden;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body.lang-ko {
+  font-family: 'Noto Sans KR', 'Plus Jakarta Sans', sans-serif;
+}
+body.lang-ja {
+  font-family: 'Noto Sans JP', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--border-lit);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+/* ==================== GLOBAL TEXTURES ==================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.006) 2px, rgba(0,212,255,0.006) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.6;
+}
+
+/* ==================== BOOT SEQUENCE ==================== */
+@keyframes bootFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes bootSlide {
+  0% { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes bootScale {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ==================== LANG TOGGLE ==================== */
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+  backdrop-filter: blur(8px);
+}
+.lang-btn {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.08em;
+}
+.lang-btn.active {
+  color: var(--amber);
+  background: var(--amber-dim);
+  text-shadow: 0 0 12px var(--amber-glow);
+}
+.lang-btn:hover:not(.active) {
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.03);
+}
+
+/* Translation visibility */
+[data-lang-ko] { display: none; }
+[data-lang-ja] { display: none; }
+[data-lang-en] { display: inline; }
+body.lang-ko [data-lang-ko] { display: inline; }
+body.lang-ko [data-lang-en] { display: none; }
+body.lang-ja [data-lang-ja] { display: inline; }
+body.lang-ja [data-lang-en] { display: none; }
+body.lang-ja [data-lang-ko] { display: none; }
+[data-lang-ko-block] { display: none; }
+[data-lang-ja-block] { display: none; }
+[data-lang-en-block] { display: block; }
+body.lang-ko [data-lang-ko-block] { display: block; }
+body.lang-ko [data-lang-en-block] { display: none; }
+body.lang-ja [data-lang-ja-block] { display: block; }
+body.lang-ja [data-lang-en-block] { display: none; }
+body.lang-ja [data-lang-ko-block] { display: none; }
+div[data-lang-ko-block] { display: none; }
+div[data-lang-ja-block] { display: none; }
+div[data-lang-en-block] { display: block; }
+body.lang-ko div[data-lang-ko-block] { display: block; }
+body.lang-ko div[data-lang-en-block] { display: none; }
+body.lang-ja div[data-lang-ja-block] { display: block; }
+body.lang-ja div[data-lang-en-block] { display: none; }
+body.lang-ja div[data-lang-ko-block] { display: none; }
+[data-lang-ko-flex] { display: none; }
+[data-lang-ja-flex] { display: none; }
+[data-lang-en-flex] { display: flex; }
+body.lang-ko [data-lang-ko-flex] { display: flex; }
+body.lang-ko [data-lang-en-flex] { display: none; }
+body.lang-ja [data-lang-ja-flex] { display: flex; }
+body.lang-ja [data-lang-en-flex] { display: none; }
+body.lang-ja [data-lang-ko-flex] { display: none; }
+[data-lang-ko-grid] { display: none; }
+[data-lang-ja-grid] { display: none; }
+[data-lang-en-grid] { display: grid; }
+body.lang-ko [data-lang-ko-grid] { display: grid; }
+body.lang-ko [data-lang-en-grid] { display: none; }
+body.lang-ja [data-lang-ja-grid] { display: grid; }
+body.lang-ja [data-lang-en-grid] { display: none; }
+body.lang-ja [data-lang-ko-grid] { display: none; }
+
+/* ==================== NAV ==================== */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(3,7,17,0.75);
+  backdrop-filter: blur(24px) saturate(1.6);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav.scrolled {
+  background: rgba(3,7,17,0.92);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+}
+.nav-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  gap: 1.5rem;
+}
+.nav-brand {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 0.2em;
+  color: var(--amber);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  text-shadow: 0 0 20px var(--amber-glow);
+  position: relative;
+}
+.nav-brand::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--amber), transparent);
+  opacity: 0.5;
+}
+.nav-links {
+  display: flex;
+  gap: 0.2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-links a {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  text-decoration: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.06em;
+  position: relative;
+}
+.nav-links a:hover {
+  color: var(--cyan);
+  background: var(--cyan-dim);
+}
+.nav-links a.active {
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  box-shadow: inset 0 -2px 0 var(--cyan);
+}
+.nav-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green-glow), 0 0 20px var(--green-dim);
+  animation: statusPulse 2.5s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 6px var(--green-glow); }
+  50% { box-shadow: 0 0 12px var(--green-glow), 0 0 24px var(--green-dim); }
+}
+.status-text {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 10px var(--green-dim);
+}
+
+/* ==================== LAYOUT ==================== */
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+section {
+  padding: 7rem 0;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Section Headers */
+.section-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0.8;
+}
+.section-label::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--amber), transparent);
+}
+.section-heading {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 0.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.section-sub {
+  color: var(--text-dim);
+  font-size: 1.12rem;
+  font-weight: 400;
+  margin-bottom: 3.5rem;
+  max-width: 680px;
+  line-height: 1.7;
+}
+
+/* Section Divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-lit), transparent);
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+/* ==================== HERO ==================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 8rem 2rem 5rem;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(0,212,255,0.06) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 30% at 30% 60%, rgba(240,168,48,0.04) 0%, transparent 60%),
+              radial-gradient(ellipse 35% 35% at 70% 50%, rgba(138,96,255,0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--amber-soft);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: bootSlide 0.9s 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  text-shadow: 0 0 20px var(--amber-dim);
+}
+.hero h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: bootSlide 0.9s 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.hero h1 .highlight {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--cyan) 50%, var(--violet) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 8s ease infinite;
+  filter: drop-shadow(0 0 40px var(--cyan-dim));
+}
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-dim);
+  font-weight: 400;
+  max-width: 580px;
+  margin: 0 auto 3.5rem;
+  line-height: 1.7;
+  opacity: 0;
+  animation: bootSlide 0.9s 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Stats Bar */
+.stats-bar {
+  display: flex;
+  gap: 1px;
+  background: var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  opacity: 0;
+  animation: bootScale 0.9s 1.0s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.stat {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  padding: 1.25rem 2.2rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stat:hover {
+  background: rgba(0,212,255,0.04);
+}
+.stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--cyan));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.stat:hover::after { opacity: 1; }
+.stat-val {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cyan);
+  line-height: 1;
+  text-shadow: 0 0 20px var(--cyan-dim);
+}
+.stat-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 0.4rem;
+}
+
+/* ==================== GLASS CARD BASE ==================== */
+.glass-card {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
+  pointer-events: none;
+}
+.glass-card:hover {
+  border-color: var(--border-lit);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+/* ==================== SECTION 1: EVOLUTION ==================== */
+.evo-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+.evo-track::before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), var(--cyan), var(--violet), var(--amber));
+  opacity: 0.2;
+  border-radius: 1px;
+}
+.evo-card {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2.25rem 1.5rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.evo-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.evo-card:hover {
+  border-color: var(--border-lit);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+.evo-card:hover::before { opacity: 1; }
+.evo-card[data-v="1"]::before { background: radial-gradient(ellipse at top, rgba(0,232,138,0.06), transparent 70%); }
+.evo-card[data-v="2"]::before { background: radial-gradient(ellipse at top, rgba(0,212,255,0.06), transparent 70%); }
+.evo-card[data-v="3"]::before { background: radial-gradient(ellipse at top, rgba(138,96,255,0.06), transparent 70%); }
+.evo-card[data-v="4"]::before { background: radial-gradient(ellipse at top, rgba(240,168,48,0.06), transparent 70%); }
+.evo-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 3px solid var(--bg);
+}
+.evo-card[data-v="1"] .evo-dot { background: var(--green); box-shadow: 0 0 16px var(--green-glow); }
+.evo-card[data-v="2"] .evo-dot { background: var(--cyan); box-shadow: 0 0 16px var(--cyan-glow); }
+.evo-card[data-v="3"] .evo-dot { background: var(--violet); box-shadow: 0 0 16px var(--violet-glow); }
+.evo-card[data-v="4"] .evo-dot { background: var(--amber); box-shadow: 0 0 16px var(--amber-glow); }
+.evo-ver {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.evo-card[data-v="1"] .evo-ver { color: var(--green); text-shadow: 0 0 10px var(--green-dim); }
+.evo-card[data-v="2"] .evo-ver { color: var(--cyan); text-shadow: 0 0 10px var(--cyan-dim); }
+.evo-card[data-v="3"] .evo-ver { color: var(--violet); text-shadow: 0 0 10px var(--violet-dim); }
+.evo-card[data-v="4"] .evo-ver { color: var(--amber); text-shadow: 0 0 10px var(--amber-dim); }
+.evo-card h3 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: var(--text-bright);
+}
+.evo-tagline {
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.evo-card ul { list-style: none; }
+.evo-card li {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  padding: 0.22rem 0 0.22rem 1.1rem;
+  position: relative;
+  transition: color 0.2s;
+}
+.evo-card:hover li { color: var(--text); }
+.evo-card li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.55rem;
+  width: 5px; height: 5px;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+.evo-card[data-v="1"] li::before { background: var(--green); }
+.evo-card[data-v="2"] li::before { background: var(--cyan); }
+.evo-card[data-v="3"] li::before { background: var(--violet); }
+.evo-card[data-v="4"] li::before { background: var(--amber); }
+
+/* ==================== SECTION 2: COMPARISON ==================== */
+.compare-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.compare-panel {
+  background: linear-gradient(180deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.compare-head {
+  padding: 1.25rem 1.75rem;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.compare-head .tag {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.22rem 0.55rem;
+  border-radius: 4px;
+  letter-spacing: 0.12em;
+}
+.compare-panel.v3-panel .compare-head {
+  background: linear-gradient(135deg, rgba(138,96,255,0.08), transparent);
+}
+.compare-panel.v3-panel .tag {
+  background: var(--violet-dim);
+  color: var(--violet);
+  border: 1px solid rgba(138,96,255,0.15);
+}
+.compare-panel.v4-panel .compare-head {
+  background: linear-gradient(135deg, var(--amber-dim), transparent);
+}
+.compare-panel.v4-panel .tag {
+  background: var(--amber-dim);
+  color: var(--amber);
+  border: 1px solid rgba(240,168,48,0.15);
+}
+.cmp-row {
+  padding: 0.8rem 1.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  display: flex;
+  gap: 1rem;
+  font-size: 0.92rem;
+  transition: all 0.25s;
+}
+.cmp-row:last-child { border-bottom: none; }
+.cmp-row:hover {
+  background: rgba(0,212,255,0.03);
+  padding-left: 2rem;
+}
+.cmp-axis {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cyan);
+  min-width: 130px;
+  flex-shrink: 0;
+}
+.v4-panel .cmp-axis { color: var(--amber); }
+.cmp-detail { color: var(--text-dim); }
+
+/* ==================== SECTION 3: PHILOSOPHY ==================== */
+.paradigm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.paradigm {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+.paradigm:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+}
+.paradigm-icon {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 24px;
+  display: inline-block;
+}
+.paradigm.trad {
+  background: linear-gradient(180deg, rgba(255,64,96,0.06), rgba(12,26,46,0.6));
+}
+.paradigm.trad .paradigm-icon {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(255,64,96,0.15);
+}
+.paradigm.rag {
+  background: linear-gradient(180deg, rgba(240,168,48,0.05), rgba(12,26,46,0.6));
+}
+.paradigm.rag .paradigm-icon {
+  background: var(--amber-dim);
+  color: var(--amber);
+  border: 1px solid rgba(240,168,48,0.15);
+}
+.paradigm.magi {
+  background: linear-gradient(180deg, rgba(0,212,255,0.06), rgba(12,26,46,0.6));
+  border-color: rgba(0,212,255,0.2);
+}
+.paradigm.magi .paradigm-icon {
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  border: 1px solid rgba(0,212,255,0.2);
+}
+.paradigm h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: var(--text-bright);
+}
+.paradigm p {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Metrics */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.metric-card {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--cyan));
+}
+.metric-val {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--cyan);
+  line-height: 1.2;
+  text-shadow: 0 0 30px var(--cyan-dim);
+}
+.metric-label {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Differentiators */
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.diff-card {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.diff-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.diff-card:nth-child(1)::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+.diff-card:nth-child(2)::before { background: linear-gradient(90deg, var(--violet), transparent); }
+.diff-card:nth-child(3)::before { background: linear-gradient(90deg, var(--amber), transparent); }
+.diff-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+}
+.diff-num {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-faint);
+  letter-spacing: 0.18em;
+  margin-bottom: 0.65rem;
+  text-transform: uppercase;
+}
+.diff-card h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.65rem;
+}
+.diff-card:nth-child(1) h4 { color: var(--cyan); }
+.diff-card:nth-child(2) h4 { color: var(--violet); }
+.diff-card:nth-child(3) h4 { color: var(--amber); }
+.diff-card p {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+/* Karpathy Before/After */
+.origin-compare {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.origin-box {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  transition: all 0.35s;
+}
+.origin-box:hover {
+  border-color: var(--border-lit);
+}
+.origin-box h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+}
+.origin-box.before h4 { color: var(--text-dim); }
+.origin-box.after h4 { color: var(--cyan); text-shadow: 0 0 12px var(--cyan-dim); }
+.origin-box ul { list-style: none; }
+.origin-box li {
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  padding: 0.3rem 0 0.3rem 1.3rem;
+  position: relative;
+}
+.origin-box li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.origin-box.before li::before { color: var(--text-faint); }
+.origin-box.after li::before { color: var(--cyan); }
+.origin-arrow {
+  text-align: center;
+  font-family: 'Fira Code', monospace;
+  font-size: 1.6rem;
+  color: var(--amber);
+  text-shadow: 0 0 16px var(--amber-glow);
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+/* ==================== SECTION 4: PIPELINE ==================== */
+.pipeline-flow {
+  background: linear-gradient(180deg, rgba(12,26,46,0.8), rgba(12,26,46,0.4));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.pipeline-flow::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan-soft), transparent);
+}
+.pipe-layer {
+  border-radius: var(--radius-sm);
+  padding: 1.75rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+  transition: all 0.3s;
+}
+.pipe-layer.l1 {
+  background: rgba(240,168,48,0.03);
+  border: 1px solid rgba(240,168,48,0.12);
+}
+.pipe-layer.l2 {
+  background: rgba(0,212,255,0.03);
+  border: 1px solid rgba(0,212,255,0.12);
+}
+.pipe-layer.l3 {
+  background: rgba(0,232,138,0.03);
+  border: 1px solid rgba(0,232,138,0.12);
+}
+.pipe-layer:hover {
+  transform: translateX(4px);
+}
+.pipe-head {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pipe-head .pipe-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.l1 .pipe-head { color: var(--amber); }
+.l1 .pipe-dot { background: var(--amber); box-shadow: 0 0 10px var(--amber-glow); }
+.l2 .pipe-head { color: var(--cyan); }
+.l2 .pipe-dot { background: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
+.l3 .pipe-head { color: var(--green); }
+.l3 .pipe-dot { background: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+.pipe-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.pipe-tag {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pipe-tag:hover {
+  border-color: rgba(0,212,255,0.3);
+  color: var(--text);
+  background: rgba(0,212,255,0.05);
+  transform: translateY(-1px);
+}
+.pipe-tag strong {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.pipe-connector {
+  text-align: center;
+  padding: 0.4rem 0;
+  color: var(--text-faint);
+  font-size: 0.9rem;
+  opacity: 0.5;
+}
+.feedback-zone {
+  margin-top: 1.25rem;
+  border: 1px dashed rgba(138,96,255,0.25);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  background: rgba(138,96,255,0.02);
+}
+.feedback-zone .fz-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--violet);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 0 10px var(--violet-dim);
+}
+
+/* ==================== SECTION 5: GAP ANALYSIS ==================== */
+.gap-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.gap-panel {
+  background: linear-gradient(180deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.gap-head {
+  padding: 1.1rem 1.5rem;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.gap-head .gh-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.gap-panel:nth-child(1) .gh-dot { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); }
+.gap-panel:nth-child(2) .gh-dot { background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+.gap-panel:nth-child(3) .gh-dot { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+.gap-item {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  transition: background 0.25s;
+}
+.gap-item:last-child { border-bottom: none; }
+.gap-item:hover { background: rgba(255,255,255,0.015); }
+.gap-item-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-bright);
+}
+.gap-now, .gap-next {
+  font-size: 0.84rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+.gap-now::before {
+  content: 'NOW';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.12em;
+  flex-shrink: 0;
+  padding: 0.1rem 0.35rem;
+  background: var(--red-dim);
+  border-radius: 3px;
+}
+.gap-next::before {
+  content: 'NEXT';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.12em;
+  flex-shrink: 0;
+  padding: 0.1rem 0.35rem;
+  background: var(--green-dim);
+  border-radius: 3px;
+}
+.gap-now { color: var(--text-faint); }
+.gap-next { color: var(--text-dim); }
+
+/* ==================== SECTION 6: V5 DIRECTION ==================== */
+.v5-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+.v5-card {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2.25rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.v5-card:hover {
+  border-color: rgba(0,212,255,0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,212,255,0.08);
+}
+.v5-card::before {
+  content: attr(data-n);
+  position: absolute;
+  top: -18px; right: 8px;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: var(--cyan);
+  opacity: 0.03;
+  line-height: 1;
+  pointer-events: none;
+}
+.v5-card h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 0.3rem;
+  text-shadow: 0 0 14px var(--cyan-dim);
+}
+.v5-card .v5-sub {
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  font-style: italic;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.v5-card ul { list-style: none; }
+.v5-card li {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  padding: 0.28rem 0 0.28rem 1.1rem;
+  position: relative;
+}
+.v5-card li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cyan);
+}
+
+/* Sprint 0 */
+.sprint-box {
+  background: linear-gradient(135deg, rgba(0,212,255,0.04), rgba(138,96,255,0.04));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+}
+.sprint-box h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 1.75rem;
+  text-shadow: 0 0 14px var(--cyan-dim);
+}
+.sprint-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+.sprint-item {
+  background: rgba(12,26,46,0.8);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.sprint-item .si-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--cyan);
+  opacity: 0.06;
+  position: absolute;
+  top: 0.4rem; right: 0.7rem;
+  line-height: 1;
+}
+.sprint-item h5 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-bright);
+}
+.sprint-item p {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ==================== SECTION 7: INSIGHT ==================== */
+.insight-block {
+  background: linear-gradient(135deg, rgba(12,26,46,0.9), rgba(12,26,46,0.6));
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-lit);
+  border-radius: var(--radius-lg);
+  padding: 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.insight-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--cyan), var(--violet));
+}
+.insight-block::after {
+  content: '';
+  position: absolute;
+  bottom: -50%; right: -20%;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.04), transparent 70%);
+  pointer-events: none;
+}
+.insight-block .quote-mark {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: var(--amber);
+  opacity: 0.12;
+  line-height: 1;
+  margin-bottom: -2.5rem;
+}
+.insight-block p {
+  font-size: 1.15rem;
+  line-height: 2;
+  max-width: 760px;
+  position: relative;
+}
+.insight-block p strong { color: var(--text-bright); }
+.insight-block p em {
+  color: var(--amber);
+  font-style: normal;
+  text-shadow: 0 0 14px var(--amber-dim);
+}
+.evo-line {
+  margin-top: 2rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 12px var(--cyan-dim);
+}
+.insight-sig {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  text-align: right;
+  font-family: 'Fira Code', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* ==================== SECTION 8: SOURCE TEXT ==================== */
+.source-text-section { padding: 7rem 0; }
+.source-block {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.3s;
+}
+.source-block:hover { border-color: var(--border-lit); }
+.source-block h3 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  text-shadow: 0 0 12px var(--cyan-dim);
+}
+.source-block .src-body {
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  line-height: 2;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.source-block .src-body strong { color: var(--text-bright); }
+.source-block .src-body em {
+  color: var(--amber);
+  font-style: normal;
+}
+.src-divider {
+  border: none;
+  border-top: 1px dashed rgba(255,255,255,0.05);
+  margin: 1.5rem 0;
+}
+.source-toc {
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 2.25rem;
+  margin-bottom: 2rem;
+}
+.source-toc h3 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--amber);
+  margin-bottom: 1.25rem;
+  text-shadow: 0 0 12px var(--amber-dim);
+}
+.source-toc ol {
+  list-style: none;
+  counter-reset: src-counter;
+}
+.source-toc li {
+  counter-increment: src-counter;
+  padding: 0.45rem 0;
+  font-size: 0.92rem;
+}
+.source-toc li::before {
+  content: counter(src-counter, decimal-leading-zero) '.';
+  font-family: 'Fira Code', monospace;
+  color: var(--cyan);
+  margin-right: 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.source-toc a {
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: all 0.25s;
+}
+.source-toc a:hover {
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan-dim);
+}
+
+/* ==================== FOOTER ==================== */
+.site-footer {
+  text-align: center;
+  padding: 3.5rem 2rem;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-family: 'Fira Code', monospace;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  border-top: 1px solid var(--glass-border);
+  background: linear-gradient(180deg, transparent, rgba(0,212,255,0.02));
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1100px) {
+  .evo-track { grid-template-columns: repeat(2, 1fr); }
+  .compare-wrap { grid-template-columns: 1fr; }
+  .gap-cols { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .main { padding: 0 1.5rem; }
+  .nav-inner { padding: 0 1.5rem; gap: 0.75rem; }
+  section { padding: 5rem 0; }
+  .evo-track, .paradigm-grid,
+  .diff-grid, .metrics-row, .v5-grid, .sprint-items {
+    grid-template-columns: 1fr;
+  }
+  .origin-compare {
+    grid-template-columns: 1fr;
+  }
+  .origin-arrow { transform: rotate(90deg); }
+  .evo-track::before { display: none; }
+  .stats-bar { flex-wrap: wrap; }
+  .hero h1 { font-size: 2.5rem; }
+  .section-heading { font-size: 2rem; }
+  .stat { padding: 1rem 1.25rem; }
+  .pipeline-flow { padding: 1.5rem; }
+  .insight-block { padding: 2rem; }
+}
+@media (max-width: 480px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1rem 3rem; }
+  .hero h1 { font-size: 2rem; }
+  .section-heading { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <div class="nav-brand">MAGI</div>
+    <div class="nav-links">
+      <a href="#evolution"><span data-lang-en>EVOLUTION</span><span data-lang-ko>진화</span><span data-lang-ja>進化</span></a>
+      <a href="#comparison">V3 VS V4</a>
+      <a href="#philosophy"><span data-lang-en>PHILOSOPHY</span><span data-lang-ko>철학</span><span data-lang-ja>哲学</span></a>
+      <a href="#pipeline"><span data-lang-en>PIPELINE</span><span data-lang-ko>파이프라인</span><span data-lang-ja>パイプライン</span></a>
+      <a href="#gaps"><span data-lang-en>GAP ANALYSIS</span><span data-lang-ko>갭 분석</span><span data-lang-ja>ギャップ分析</span></a>
+      <a href="#v5"><span data-lang-en>V5 DIRECTION</span><span data-lang-ko>V5 방향</span><span data-lang-ja>V5ビジョン</span></a>
+      <a href="#insight"><span data-lang-en>INSIGHT</span><span data-lang-ko>인사이트</span><span data-lang-ja>インサイト</span></a>
+      <a href="#source-text"><span data-lang-en>SOURCE</span><span data-lang-ko>원문</span><span data-lang-ja>原文</span></a>
+    </div>
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      <span class="status-text">SYSTEM ACTIVE</span>
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ko">KO</button>
+        <button class="lang-btn" data-lang="ja">JA</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ==================== HERO ==================== -->
+<section class="hero visible" id="hero">
+  <canvas class="hero-canvas" id="graphCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span data-lang-en>Living Knowledge Base for AI Agent Era</span>
+      <span data-lang-ko>AI 에이전트 시대를 위한 살아있는 지식 기반</span>
+      <span data-lang-ja>AIエージェント時代のための生きた知識ベース</span>
+    </div>
+    <h1><span class="highlight">MAGI-wiki</span></h1>
+    <p class="hero-subtitle">
+      <span data-lang-en>Karpathy's LLM Wiki pattern, evolved into a self-diagnosing, bidirectional knowledge organism with 4-agent autonomy.</span>
+      <span data-lang-ko>Karpathy의 LLM Wiki 패턴을, 4-에이전트 자율 운영 체제로 진화시킨 자가진단형 양방향 지식 유기체.</span>
+      <span data-lang-ja>KarpathyのLLM Wikiパターンを、4エージェント自律運用体制へと進化させた自己診断型・双方向型の知識有機体。</span>
+    </p>
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-val" data-count="968">0</div><div class="stat-label">Pages</div></div>
+      <div class="stat"><div class="stat-val" data-count="968">0</div><div class="stat-label">Vectors</div></div>
+      <div class="stat"><div class="stat-val" data-count="0">0</div><div class="stat-label">Drift</div></div>
+      <div class="stat"><div class="stat-val" data-count="7">0</div><div class="stat-label">Types</div></div>
+      <div class="stat"><div class="stat-val" data-count="11">0</div><div class="stat-label">Categories</div></div>
+      <div class="stat"><div class="stat-val" data-count="278">0</div><div class="stat-label">Sessions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 1. EVOLUTION ==================== -->
+<section id="evolution">
+  <div class="section-label">Section 01</div>
+  <h2 class="section-heading">
+    <span data-lang-en>Evolution Timeline</span>
+    <span data-lang-ko>진화 타임라인</span>
+    <span data-lang-ja>進化のタイムライン</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>From raw tooling to self-healing integrity — four generations of knowledge infrastructure.</span>
+    <span data-lang-ko>도구 구축에서 자가 치유 무결성까지 — 지식 인프라의 4세대 진화.</span>
+    <span data-lang-ja>ツール構築から自己修復型の整合性まで — 知識インフラ4世代の進化。</span>
+  </p>
+
+  <!-- EN -->
+  <div class="evo-track" data-lang-en-grid>
+    <div class="evo-card" data-v="1">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v1 — Foundation</div>
+      <h3>Build the Tools</h3>
+      <p class="evo-tagline">Pipeline, Schema, Lint</p>
+      <ul>
+        <li>wiki_ingest.py core</li>
+        <li>SCHEMA v1 (7 types)</li>
+        <li>Lint rules L-01~L-10</li>
+        <li>Pinecone vector store</li>
+        <li>_inbox / _discover routes</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="2">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v2 — Orchestration</div>
+      <h3>Build the Team</h3>
+      <p class="evo-tagline">4 Sub-Agents + Cross-Project</p>
+      <ul>
+        <li>ingest-agent</li>
+        <li>lint-agent</li>
+        <li>curator-agent (light/deep)</li>
+        <li>advisor-agent (hybrid)</li>
+        <li>Cross-project _inbox</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="3">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v3 — Autonomy</div>
+      <h3>Let the Team Run</h3>
+      <p class="evo-tagline">Event-Driven + Incremental</p>
+      <ul>
+        <li>ingest&#8594;lint&#8594;curator chain</li>
+        <li>git diff incremental</li>
+        <li>Approval rate tracking</li>
+        <li>retry_queue + cooldown</li>
+        <li>Hybrid search (SC+Pinecone)</li>
+        <li>Codemap auto-detect</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="4">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v4 — Integrity</div>
+      <h3>Seal the Gaps</h3>
+      <p class="evo-tagline">Data Integrity + Graph Balance</p>
+      <ul>
+        <li>--re-embed 3-path sync</li>
+        <li>URL dedup (video_id)</li>
+        <li>LLM content classification</li>
+        <li>12-pair duplicate merge</li>
+        <li>SCHEMA single source of truth</li>
+        <li>A-18 graph rebalancing</li>
+        <li>Size-based LLM routing</li>
+        <li>L-19 Related title fix</li>
+        <li>Legacy full cleanup</li>
+      </ul>
+    </div>
+  </div>
+  <!-- KO -->
+  <div class="evo-track" data-lang-ko-grid>
+    <div class="evo-card" data-v="1">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v1 — 기반 구축</div>
+      <h3>도구를 만들다</h3>
+      <p class="evo-tagline">파이프라인, 스키마, 린트</p>
+      <ul>
+        <li>wiki_ingest.py 핵심 엔진</li>
+        <li>SCHEMA v1 (7가지 타입)</li>
+        <li>린트 규칙 L-01~L-10</li>
+        <li>Pinecone 벡터 저장소</li>
+        <li>_inbox / _discover 경로</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="2">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v2 — 오케스트레이션</div>
+      <h3>팀을 구성하다</h3>
+      <p class="evo-tagline">4 서브에이전트 + 크로스프로젝트</p>
+      <ul>
+        <li>ingest-agent (수집)</li>
+        <li>lint-agent (품질)</li>
+        <li>curator-agent (관리 light/deep)</li>
+        <li>advisor-agent (검색 하이브리드)</li>
+        <li>크로스프로젝트 _inbox 역저장</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="3">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v3 — 자율 운영</div>
+      <h3>팀이 스스로 돌아가다</h3>
+      <p class="evo-tagline">이벤트 드리븐 + 증분 처리</p>
+      <ul>
+        <li>ingest&#8594;lint&#8594;curator 자동 체이닝</li>
+        <li>git diff 기반 증분 처리</li>
+        <li>승인율 추적 + 자율 등급 전환</li>
+        <li>retry_queue + 채널 쿨다운</li>
+        <li>하이브리드 검색 (SC+Pinecone)</li>
+        <li>코드맵 자동 감지</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="4">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v4 — 무결성</div>
+      <h3>빈틈을 봉합하다</h3>
+      <p class="evo-tagline">데이터 무결성 + 그래프 균형</p>
+      <ul>
+        <li>--re-embed 3경로 동기화</li>
+        <li>URL 중복 제거 (video_id)</li>
+        <li>LLM 콘텐츠 자동 분류</li>
+        <li>12쌍 중복 source 병합</li>
+        <li>SCHEMA 단일 진실 원천</li>
+        <li>A-18 그래프 리밸런싱</li>
+        <li>규모 기반 LLM 라우팅</li>
+        <li>L-19 Related title 수정</li>
+        <li>레거시 완전 제거</li>
+      </ul>
+    </div>
+  </div>
+  <!-- JA -->
+  <div class="evo-track" data-lang-ja-grid>
+    <div class="evo-card" data-v="1">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v1 — 基盤構築</div>
+      <h3>ツールを作る</h3>
+      <p class="evo-tagline">パイプライン・スキーマ・Lint</p>
+      <ul>
+        <li>wiki_ingest.py コアエンジン</li>
+        <li>SCHEMA v1（7タイプ）</li>
+        <li>Lintルール L-01〜L-10</li>
+        <li>Pineconeベクトルストア</li>
+        <li>_inbox / _discover ルート</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="2">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v2 — オーケストレーション</div>
+      <h3>チームを編成する</h3>
+      <p class="evo-tagline">4サブエージェント + クロスプロジェクト</p>
+      <ul>
+        <li>ingest-agent（収集）</li>
+        <li>lint-agent（品質）</li>
+        <li>curator-agent（管理 light/deep）</li>
+        <li>advisor-agent（検索ハイブリッド）</li>
+        <li>クロスプロジェクト _inbox 逆保存</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="3">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v3 — 自律運用</div>
+      <h3>チームが自走する</h3>
+      <p class="evo-tagline">イベント駆動 + インクリメンタル処理</p>
+      <ul>
+        <li>ingest&#8594;lint&#8594;curator 自動チェーニング</li>
+        <li>git diff ベースのインクリメンタル処理</li>
+        <li>承認率トラッキング + 自律等級の遷移</li>
+        <li>retry_queue + チャンネルクールダウン</li>
+        <li>ハイブリッド検索（SC＋Pinecone）</li>
+        <li>コードマップ自動検出</li>
+      </ul>
+    </div>
+    <div class="evo-card" data-v="4">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v4 — 整合性</div>
+      <h3>綻びを縫合する</h3>
+      <p class="evo-tagline">データ整合性 + グラフバランス</p>
+      <ul>
+        <li>--re-embed 3経路同期</li>
+        <li>URL重複排除（video_id）</li>
+        <li>LLMによるコンテンツ自動分類</li>
+        <li>12ペアの重複source統合</li>
+        <li>SCHEMA 単一ソース・オブ・トゥルース</li>
+        <li>A-18 グラフリバランシング</li>
+        <li>規模ベースのLLMルーティング</li>
+        <li>L-19 Relatedタイトル修正</li>
+        <li>レガシー完全除去</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2. COMPARISON ==================== -->
+<section id="comparison">
+  <div class="section-label">Section 02</div>
+  <h2 class="section-heading">
+    <span data-lang-en>v3 vs v4 — Detailed Comparison</span>
+    <span data-lang-ko>v3 vs v4 — 상세 비교</span>
+    <span data-lang-ja>v3 vs v4 — 詳細比較</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>From team autonomy to structural integrity.</span>
+    <span data-lang-ko>팀 자율 운영에서 구조적 무결성으로.</span>
+    <span data-lang-ja>チーム自律運用から構造的整合性へ。</span>
+  </p>
+
+  <!-- EN -->
+  <div class="compare-wrap" data-lang-en-grid>
+    <div class="compare-panel v3-panel">
+      <div class="compare-head"><span class="tag">V3</span> Team Autonomy (Self-Running)</div>
+      <div class="cmp-row"><span class="cmp-axis">Event-Driven</span><span class="cmp-detail">ingest&#8594;lint&#8594;curator-light 3-stage auto-chaining</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Incremental</span><span class="cmp-detail">git diff based — only changed files processed</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Feedback Loop</span><span class="cmp-detail">agent_log approval rate + autonomy tier transitions</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Resilience</span><span class="cmp-detail">retry_queue + channel_cooldown + fallback wiki-ization</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Search</span><span class="cmp-detail">SC (semantic) + Pinecone (metadata) hybrid merge</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Codemap</span><span class="cmp-detail">git diff 5-file threshold &#8594; Step 3.10 auto-suggest</span></div>
+    </div>
+    <div class="compare-panel v4-panel">
+      <div class="compare-head"><span class="tag">V4</span> Data Integrity (Gap-Sealing)</div>
+      <div class="cmp-row"><span class="cmp-axis">Embed Sync</span><span class="cmp-detail">--re-embed 3-path detection (committed+working+untracked), drift 0 baseline</span></div>
+      <div class="cmp-row"><span class="cmp-axis">URL Dedup</span><span class="cmp-detail">video_id based 3-route dedup (delta/url/discover)</span></div>
+      <div class="cmp-row"><span class="cmp-axis">LLM Classify</span><span class="cmp-detail">Channel inheritance &#8594; LLM content analysis, 402p re-classified (235 applied)</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Dup Merge</span><span class="cmp-detail">12-pair merge with reference migration + Pinecone sync</span></div>
+      <div class="cmp-row"><span class="cmp-axis">SCHEMA SSOT</span><span class="cmp-detail">All scripts derive from SCHEMA.md, ghost categories purged</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Graph Balance</span><span class="cmp-detail">A-18: Code Eng 43% &#8594; 3-axis balance (QA 27% / AI Infra 26% / Data 21%)</span></div>
+      <div class="cmp-row"><span class="cmp-axis">LLM Routing</span><span class="cmp-detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3-branch + two-step split</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Related Fix</span><span class="cmp-detail">742 ID&#8594;title corrections across 341 files + L-19 lint rule</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Legacy</span><span class="cmp-detail">13 scripts git rm + README modernized</span></div>
+    </div>
+  </div>
+  <!-- KO -->
+  <div class="compare-wrap" data-lang-ko-grid>
+    <div class="compare-panel v3-panel">
+      <div class="compare-head"><span class="tag">V3</span> 팀 자율 운영 (Self-Running)</div>
+      <div class="cmp-row"><span class="cmp-axis">이벤트 드리븐</span><span class="cmp-detail">ingest&#8594;lint&#8594;curator-light 3단계 자동 체이닝</span></div>
+      <div class="cmp-row"><span class="cmp-axis">증분 처리</span><span class="cmp-detail">git diff 기반 — 변경된 파일만 처리</span></div>
+      <div class="cmp-row"><span class="cmp-axis">피드백 루프</span><span class="cmp-detail">agent_log 승인율 + 자율 등급 전환</span></div>
+      <div class="cmp-row"><span class="cmp-axis">내성</span><span class="cmp-detail">retry_queue + 채널 쿨다운 + 폴백 위키화</span></div>
+      <div class="cmp-row"><span class="cmp-axis">검색</span><span class="cmp-detail">SC(시맨틱) + Pinecone(메타데이터) 하이브리드 병합</span></div>
+      <div class="cmp-row"><span class="cmp-axis">코드맵</span><span class="cmp-detail">git diff 5파일 임계 &#8594; Step 3.10 자동 제안</span></div>
+    </div>
+    <div class="compare-panel v4-panel">
+      <div class="compare-head"><span class="tag">V4</span> 데이터 무결성 (Gap-Sealing)</div>
+      <div class="cmp-row"><span class="cmp-axis">임베딩 동기화</span><span class="cmp-detail">--re-embed 3경로 감지 (committed+working+untracked), drift 0 기준선</span></div>
+      <div class="cmp-row"><span class="cmp-axis">URL 중복제거</span><span class="cmp-detail">video_id 기반 3경로 중복 제거 (delta/url/discover)</span></div>
+      <div class="cmp-row"><span class="cmp-axis">LLM 분류</span><span class="cmp-detail">채널 상속 &#8594; LLM 콘텐츠 분석, 402p 재분류 (235건 반영)</span></div>
+      <div class="cmp-row"><span class="cmp-axis">중복 병합</span><span class="cmp-detail">12쌍 병합 + 참조 이관 + Pinecone 동기화</span></div>
+      <div class="cmp-row"><span class="cmp-axis">SCHEMA SSOT</span><span class="cmp-detail">모든 스크립트가 SCHEMA.md에서 파생, 유령 카테고리 제거</span></div>
+      <div class="cmp-row"><span class="cmp-axis">그래프 균형</span><span class="cmp-detail">A-18: Code Eng 43% &#8594; 3축 균형 (QA 27% / AI Infra 26% / Data 21%)</span></div>
+      <div class="cmp-row"><span class="cmp-axis">LLM 라우팅</span><span class="cmp-detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3분기 + two-step 분리</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Related 수정</span><span class="cmp-detail">341파일 742건 ID&#8594;title 교체 + L-19 린트 규칙</span></div>
+      <div class="cmp-row"><span class="cmp-axis">레거시</span><span class="cmp-detail">13개 스크립트 git rm + README 현대화</span></div>
+    </div>
+  </div>
+  <!-- JA -->
+  <div class="compare-wrap" data-lang-ja-grid>
+    <div class="compare-panel v3-panel">
+      <div class="compare-head"><span class="tag">V3</span> チーム自律運用（Self-Running）</div>
+      <div class="cmp-row"><span class="cmp-axis">イベント駆動</span><span class="cmp-detail">ingest&#8594;lint&#8594;curator-light 3段階の自動チェーニング</span></div>
+      <div class="cmp-row"><span class="cmp-axis">インクリメンタル</span><span class="cmp-detail">git diffベース — 変更ファイルのみ処理</span></div>
+      <div class="cmp-row"><span class="cmp-axis">フィードバックループ</span><span class="cmp-detail">agent_log 承認率 + 自律等級の遷移</span></div>
+      <div class="cmp-row"><span class="cmp-axis">レジリエンス</span><span class="cmp-detail">retry_queue + チャンネルクールダウン + フォールバックWiki化</span></div>
+      <div class="cmp-row"><span class="cmp-axis">検索</span><span class="cmp-detail">SC（セマンティック）+ Pinecone（メタデータ）ハイブリッド統合</span></div>
+      <div class="cmp-row"><span class="cmp-axis">コードマップ</span><span class="cmp-detail">git diff 5ファイル閾値 &#8594; Step 3.10 自動提案</span></div>
+    </div>
+    <div class="compare-panel v4-panel">
+      <div class="compare-head"><span class="tag">V4</span> データ整合性（Gap-Sealing）</div>
+      <div class="cmp-row"><span class="cmp-axis">埋め込み同期</span><span class="cmp-detail">--re-embed 3経路検知（committed+working+untracked）、drift 0 基準線</span></div>
+      <div class="cmp-row"><span class="cmp-axis">URL重複排除</span><span class="cmp-detail">video_idベースの3経路重複排除（delta/url/discover）</span></div>
+      <div class="cmp-row"><span class="cmp-axis">LLM分類</span><span class="cmp-detail">チャンネル継承 &#8594; LLMコンテンツ解析、402p再分類（235件反映）</span></div>
+      <div class="cmp-row"><span class="cmp-axis">重複統合</span><span class="cmp-detail">12ペア統合 + 参照移行 + Pinecone同期</span></div>
+      <div class="cmp-row"><span class="cmp-axis">SCHEMA SSOT</span><span class="cmp-detail">全スクリプトがSCHEMA.mdから派生、ゴーストカテゴリ除去</span></div>
+      <div class="cmp-row"><span class="cmp-axis">グラフバランス</span><span class="cmp-detail">A-18: Code Eng 43% &#8594; 3軸均衡（QA 27% / AI Infra 26% / Data 21%）</span></div>
+      <div class="cmp-row"><span class="cmp-axis">LLMルーティング</span><span class="cmp-detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3分岐 + two-step分離</span></div>
+      <div class="cmp-row"><span class="cmp-axis">Related修正</span><span class="cmp-detail">341ファイル742件のID&#8594;title置換 + L-19 Lintルール</span></div>
+      <div class="cmp-row"><span class="cmp-axis">レガシー</span><span class="cmp-detail">13スクリプト git rm + README 刷新</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 3. PHILOSOPHY ==================== -->
+<section id="philosophy">
+  <div class="section-label">Section 03</div>
+  <h2 class="section-heading">
+    <span data-lang-en>The Living Database</span>
+    <span data-lang-ko>살아있는 데이터베이스</span>
+    <span data-lang-ja>生きているデータベース</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>Traditional DB vs RAG vs MAGI-wiki — why bidirectional self-evolution is the next paradigm.</span>
+    <span data-lang-ko>전통 DB vs RAG vs MAGI-wiki — 양방향 자가 진화가 왜 다음 패러다임인가.</span>
+    <span data-lang-ja>従来型DB vs RAG vs MAGI-wiki — 双方向型の自己進化がなぜ次のパラダイムなのか。</span>
+  </p>
+
+  <!-- EN paradigm -->
+  <div class="paradigm-grid" data-lang-en-grid>
+    <div class="paradigm trad">
+      <div class="paradigm-icon">Traditional DB</div>
+      <h4>Static &amp; One-Way</h4>
+      <p>Human writes &#8594; DB stores &#8594; Human queries &#8594; Static result. No evolution. No cross-references. No self-diagnosis.</p>
+    </div>
+    <div class="paradigm rag">
+      <div class="paradigm-icon">RAG</div>
+      <h4>No Accumulation</h4>
+      <p>Query &#8594; Embed &#8594; Search chunks &#8594; LLM synthesize &#8594; Answer. Re-synthesizes from scratch every time. Previous synthesis lost.</p>
+    </div>
+    <div class="paradigm magi">
+      <div class="paradigm-icon">MAGI-wiki</div>
+      <h4>Bidirectional &amp; Self-Evolving</h4>
+      <p>Once refined &#8594; cross-references pre-built &#8594; contradictions pre-detected &#8594; knowledge compounds. Insights flow back from projects.</p>
+    </div>
+  </div>
+  <!-- KO paradigm -->
+  <div class="paradigm-grid" data-lang-ko-grid>
+    <div class="paradigm trad">
+      <div class="paradigm-icon">전통 DB</div>
+      <h4>정적 &amp; 단방향</h4>
+      <p>인간이 입력 &#8594; DB가 저장 &#8594; 인간이 쿼리 &#8594; 정적 결과. 진화 없음. 교차 참조 없음. 자가 진단 없음.</p>
+    </div>
+    <div class="paradigm rag">
+      <div class="paradigm-icon">RAG</div>
+      <h4>축적 없음</h4>
+      <p>질문 &#8594; 임베딩 &#8594; 청크 검색 &#8594; LLM 합성 &#8594; 답변. 매번 처음부터 다시 합성. 이전 합성 결과는 유실.</p>
+    </div>
+    <div class="paradigm magi">
+      <div class="paradigm-icon">MAGI-wiki</div>
+      <h4>양방향 &amp; 자가 진화</h4>
+      <p>한 번 정제 &#8594; 교차 참조 사전 구축 &#8594; 모순 사전 감지 &#8594; 지식이 복리로 축적. 프로젝트 인사이트가 역류.</p>
+    </div>
+  </div>
+
+  <!-- EN metrics -->
+  <div class="metrics-row" data-lang-en-grid>
+    <div class="metric-card">
+      <div class="metric-val">84%</div>
+      <div class="metric-label">Reflection topics naturally absorbed<br>(60/71 items self-resolved)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">43% &#8594; 27%</div>
+      <div class="metric-label">Graph bias rebalanced<br>(A-18 structural intervention)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">12 &#8594; 0</div>
+      <div class="metric-label">Duplicates merged losslessly<br>(references migrated intact)</div>
+    </div>
+  </div>
+  <!-- KO metrics -->
+  <div class="metrics-row" data-lang-ko-grid>
+    <div class="metric-card">
+      <div class="metric-val">84%</div>
+      <div class="metric-label">Reflection 토픽 자연 흡수<br>(71건 중 60건 자동 해소)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">43% &#8594; 27%</div>
+      <div class="metric-label">그래프 편향 리밸런싱<br>(A-18 구조적 개입)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">12 &#8594; 0</div>
+      <div class="metric-label">중복 무손실 병합<br>(참조 완전 이관)</div>
+    </div>
+  </div>
+
+  <!-- EN diff -->
+  <div class="diff-grid" data-lang-en-grid>
+    <div class="diff-card">
+      <div class="diff-num">DIFFERENTIATOR 01</div>
+      <h4>Knowledge Compounding</h4>
+      <p>RAG re-synthesizes from zero every query. MAGI-wiki pre-builds cross-references so each new page enriches the existing graph. SYN-001 proved the maturity transition: "Setup Manual &#8594; Validation System &#8594; Self-Growth".</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">DIFFERENTIATOR 02</div>
+      <h4>Bidirectional Flow</h4>
+      <p>Insights from live projects (F_MAGI, M_MAGI, ALLTHAT) flow back via _inbox into the wiki. Wiki knowledge then re-injects into projects. Not one-way — a living circulation.</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">DIFFERENTIATOR 03</div>
+      <h4>Self-Diagnosis</h4>
+      <p>InfraNodus graph analysis &#8594; automatic gap/bias detection &#8594; structural intervention &#8594; re-measurement of effect. The knowledge structure monitors and rebalances itself.</p>
+    </div>
+  </div>
+  <!-- KO diff -->
+  <div class="diff-grid" data-lang-ko-grid>
+    <div class="diff-card">
+      <div class="diff-num">차별점 01</div>
+      <h4>지식 복리 효과</h4>
+      <p>RAG는 매 쿼리마다 제로에서 재합성한다. MAGI-wiki는 교차 참조를 사전 구축하여 새 페이지가 기존 그래프를 풍부하게 한다. SYN-001이 성숙도 전환을 증명: "설치 매뉴얼 &#8594; 검증 시스템 &#8594; 자율 성장".</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">차별점 02</div>
+      <h4>양방향 흐름</h4>
+      <p>실서비스 프로젝트(F_MAGI, M_MAGI, ALLTHAT)의 인사이트가 _inbox를 통해 위키로 역류. 위키 지식이 다시 프로젝트에 주입. 단방향이 아닌 살아있는 순환.</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">차별점 03</div>
+      <h4>자가 진단</h4>
+      <p>InfraNodus 그래프 분석 &#8594; 자동 갭/편향 감지 &#8594; 구조적 개입 &#8594; 효과 재측정. 지식 구조가 스스로 모니터링하고 리밸런싱한다.</p>
+    </div>
+  </div>
+
+  <!-- EN origin -->
+  <div class="origin-compare" data-lang-en-grid>
+    <div class="origin-box before">
+      <h4>Karpathy's Original</h4>
+      <ul>
+        <li>"Let's make a wiki with LLM"</li>
+        <li>1-Layer (manual)</li>
+        <li>No pipeline automation</li>
+        <li>No graph analysis</li>
+        <li>No feedback loop</li>
+      </ul>
+    </div>
+    <div class="origin-arrow">&#8594;</div>
+    <div class="origin-box after">
+      <h4>MAGI Extension</h4>
+      <ul>
+        <li>3-Layer (Raw / Wiki / Schema)</li>
+        <li>4-Agent team (IQEQ)</li>
+        <li>InfraNodus graph analysis</li>
+        <li>Cross-project bidirectional flow</li>
+        <li>Auto-collection pipeline (87ch)</li>
+        <li>Reflection Pass (self-check)</li>
+        <li>968p + drift 0 integrity</li>
+      </ul>
+    </div>
+  </div>
+  <!-- KO origin -->
+  <div class="origin-compare" data-lang-ko-grid>
+    <div class="origin-box before">
+      <h4>Karpathy 원본</h4>
+      <ul>
+        <li>"LLM으로 위키를 만들자"</li>
+        <li>1-레이어 (수동)</li>
+        <li>파이프라인 자동화 없음</li>
+        <li>그래프 분석 없음</li>
+        <li>피드백 루프 없음</li>
+      </ul>
+    </div>
+    <div class="origin-arrow">&#8594;</div>
+    <div class="origin-box after">
+      <h4>MAGI 확장</h4>
+      <ul>
+        <li>3-레이어 (Raw / Wiki / Schema)</li>
+        <li>4-에이전트 팀 (IQEQ)</li>
+        <li>InfraNodus 그래프 분석</li>
+        <li>크로스프로젝트 양방향 흐름</li>
+        <li>자동 수집 파이프라인 (87채널)</li>
+        <li>Reflection Pass (자가 검증)</li>
+        <li>968p + drift 0 무결성</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- JA paradigm -->
+  <div class="paradigm-grid" data-lang-ja-grid>
+    <div class="paradigm trad">
+      <div class="paradigm-icon">従来型DB</div>
+      <h4>静的＆一方向</h4>
+      <p>人間が入力 &#8594; DBが保存 &#8594; 人間がクエリ &#8594; 静的な結果。進化なし。相互参照なし。自己診断なし。</p>
+    </div>
+    <div class="paradigm rag">
+      <div class="paradigm-icon">RAG</div>
+      <h4>蓄積なし</h4>
+      <p>質問 &#8594; 埋め込み &#8594; チャンク検索 &#8594; LLM合成 &#8594; 回答。毎回ゼロから再合成。過去の合成結果は失われる。</p>
+    </div>
+    <div class="paradigm magi">
+      <div class="paradigm-icon">MAGI-wiki</div>
+      <h4>双方向＆自己進化</h4>
+      <p>一度精製 &#8594; 相互参照を事前構築 &#8594; 矛盾を事前検出 &#8594; 知識が複利で蓄積。プロジェクトからのインサイトが逆流する。</p>
+    </div>
+  </div>
+
+  <!-- JA metrics -->
+  <div class="metrics-row" data-lang-ja-grid>
+    <div class="metric-card">
+      <div class="metric-val">84%</div>
+      <div class="metric-label">Reflectionトピックを自然に吸収<br>（71件中60件が自動解消）</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">43% &#8594; 27%</div>
+      <div class="metric-label">グラフの偏りをリバランス<br>（A-18 構造的介入）</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">12 &#8594; 0</div>
+      <div class="metric-label">重複を無損失で統合<br>（参照を完全移行）</div>
+    </div>
+  </div>
+
+  <!-- JA diff -->
+  <div class="diff-grid" data-lang-ja-grid>
+    <div class="diff-card">
+      <div class="diff-num">差別化要因 01</div>
+      <h4>知識の複利効果</h4>
+      <p>RAGはクエリのたびにゼロから再合成する。MAGI-wikiは相互参照を事前に構築し、新規ページが既存グラフを豊かにする。SYN-001が成熟度の遷移を証明：「セットアップマニュアル &#8594; 検証システム &#8594; 自律成長」。</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">差別化要因 02</div>
+      <h4>双方向の流れ</h4>
+      <p>実運用プロジェクト（F_MAGI・M_MAGI・ALLTHAT）のインサイトが _inbox を通じてWikiへ逆流。Wiki知識が再びプロジェクトへ注入される。一方向ではなく、生きた循環。</p>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">差別化要因 03</div>
+      <h4>自己診断</h4>
+      <p>InfraNodusグラフ分析 &#8594; ギャップ/偏りを自動検出 &#8594; 構造的介入 &#8594; 効果を再測定。知識構造がみずから監視し、リバランスする。</p>
+    </div>
+  </div>
+
+  <!-- JA origin -->
+  <div class="origin-compare" data-lang-ja-grid>
+    <div class="origin-box before">
+      <h4>Karpathyオリジナル</h4>
+      <ul>
+        <li>「LLMでWikiを作ろう」</li>
+        <li>1レイヤー（手動）</li>
+        <li>パイプライン自動化なし</li>
+        <li>グラフ分析なし</li>
+        <li>フィードバックループなし</li>
+      </ul>
+    </div>
+    <div class="origin-arrow">&#8594;</div>
+    <div class="origin-box after">
+      <h4>MAGI拡張</h4>
+      <ul>
+        <li>3レイヤー（Raw / Wiki / Schema）</li>
+        <li>4エージェントチーム（IQEQ）</li>
+        <li>InfraNodusグラフ分析</li>
+        <li>クロスプロジェクト双方向フロー</li>
+        <li>自動収集パイプライン（87ch）</li>
+        <li>Reflection Pass（自己検証）</li>
+        <li>968p + drift 0 の整合性</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 4. PIPELINE ==================== -->
+<section id="pipeline">
+  <div class="section-label">Section 04</div>
+  <h2 class="section-heading">
+    <span data-lang-en>Raw &#8594; Wiki &#8594; Query Pipeline</span>
+    <span data-lang-ko>Raw &#8594; Wiki &#8594; Query 파이프라인</span>
+    <span data-lang-ja>Raw &#8594; Wiki &#8594; Query パイプライン</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>Three-layer architecture with bidirectional feedback loops.</span>
+    <span data-lang-ko>양방향 피드백 루프를 갖춘 3-레이어 아키텍처.</span>
+    <span data-lang-ja>双方向フィードバックループを備えた3レイヤーアーキテクチャ。</span>
+  </p>
+
+  <!-- EN -->
+  <div class="pipeline-flow" data-lang-en-block>
+    <div class="pipe-layer l1">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 1: Raw (Collection)</div>
+      <div class="pipe-items">
+        <div class="pipe-tag"><strong>--delta</strong> &nbsp;87ch Apify crawl (biweekly cron)</div>
+        <div class="pipe-tag"><strong>--url</strong> &nbsp;Single URL instant convert</div>
+        <div class="pipe-tag"><strong>--inbox</strong> &nbsp;Cross-project insights (4 projects)</div>
+        <div class="pipe-tag"><strong>--discover</strong> &nbsp;Mobile Obsidian + MAGI_Mobile</div>
+        <div class="pipe-tag"><strong>--codemap</strong> &nbsp;Project code structure extraction</div>
+      </div>
+    </div>
+    <div class="pipe-connector">&#9660;</div>
+    <div class="pipe-layer l2">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 2: Wiki (Refinement) — 968p / 7 types / 11 categories</div>
+      <div class="pipe-items">
+        <div class="pipe-tag">LLM Classification &#8594; SCHEMA-compliant frontmatter</div>
+        <div class="pipe-tag">SC top-3 &#8594; Related auto-assign (curator-light)</div>
+        <div class="pipe-tag">Lint L-01~L-19 &#8594; Quality gate</div>
+        <div class="pipe-tag">CHK-01~11 &#8594; Structural consistency</div>
+        <div class="pipe-tag">Reflection Pass &#8594; Contradiction + novel topic detection</div>
+        <div class="pipe-tag">--re-embed &#8594; Pinecone vector auto-sync</div>
+        <div class="pipe-tag">InfraNodus &#8594; Graph analysis + gap/bias detection</div>
+      </div>
+    </div>
+    <div class="pipe-connector">&#9660;</div>
+    <div class="pipe-layer l3">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 3: Query (Utilization)</div>
+      <div class="pipe-items">
+        <div class="pipe-tag">SC search_notes &#8594; Semantic similarity search</div>
+        <div class="pipe-tag">Pinecone search &#8594; Metadata filter search</div>
+        <div class="pipe-tag">wiki-advisor &#8594; Hybrid merge + history logging</div>
+        <div class="pipe-tag">SessionStart hint &#8594; _inbox notification</div>
+      </div>
+      <div class="feedback-zone">
+        <div class="fz-label">Feedback Loop (Bidirectional)</div>
+        <div class="pipe-items">
+          <div class="pipe-tag">Project practice &#8594; insight discovery &#8594; _inbox reverse-save &#8594; Wiki enrichment</div>
+          <div class="pipe-tag">Reflection Pass &#8594; novel topic &#8594; auto-collection trigger (v5 target)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- KO -->
+  <div class="pipeline-flow" data-lang-ko-block>
+    <div class="pipe-layer l1">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 1: Raw (수집)</div>
+      <div class="pipe-items">
+        <div class="pipe-tag"><strong>--delta</strong> &nbsp;87채널 Apify 크롤 (격주 크론)</div>
+        <div class="pipe-tag"><strong>--url</strong> &nbsp;단일 URL 즉시 변환</div>
+        <div class="pipe-tag"><strong>--inbox</strong> &nbsp;크로스프로젝트 인사이트 (4개 프로젝트)</div>
+        <div class="pipe-tag"><strong>--discover</strong> &nbsp;모바일 Obsidian + MAGI_Mobile</div>
+        <div class="pipe-tag"><strong>--codemap</strong> &nbsp;프로젝트 코드 구조 추출</div>
+      </div>
+    </div>
+    <div class="pipe-connector">&#9660;</div>
+    <div class="pipe-layer l2">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 2: Wiki (정제) — 968p / 7타입 / 11카테고리</div>
+      <div class="pipe-items">
+        <div class="pipe-tag">LLM 분류 &#8594; SCHEMA 준수 frontmatter 생성</div>
+        <div class="pipe-tag">SC top-3 &#8594; Related 자동 할당 (curator-light)</div>
+        <div class="pipe-tag">린트 L-01~L-19 &#8594; 품질 게이트</div>
+        <div class="pipe-tag">CHK-01~11 &#8594; 구조적 정합성 검사</div>
+        <div class="pipe-tag">Reflection Pass &#8594; 모순 + 신규 토픽 감지</div>
+        <div class="pipe-tag">--re-embed &#8594; Pinecone 벡터 자동 동기화</div>
+        <div class="pipe-tag">InfraNodus &#8594; 그래프 분석 + 갭/편향 감지</div>
+      </div>
+    </div>
+    <div class="pipe-connector">&#9660;</div>
+    <div class="pipe-layer l3">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 3: Query (활용)</div>
+      <div class="pipe-items">
+        <div class="pipe-tag">SC search_notes &#8594; 시맨틱 유사도 검색</div>
+        <div class="pipe-tag">Pinecone search &#8594; 메타데이터 필터 검색</div>
+        <div class="pipe-tag">wiki-advisor &#8594; 하이브리드 병합 + 이력 기록</div>
+        <div class="pipe-tag">SessionStart hint &#8594; _inbox 알림</div>
+      </div>
+      <div class="feedback-zone">
+        <div class="fz-label">피드백 루프 (양방향)</div>
+        <div class="pipe-items">
+          <div class="pipe-tag">프로젝트 실무 &#8594; 인사이트 발견 &#8594; _inbox 역저장 &#8594; 위키 강화</div>
+          <div class="pipe-tag">Reflection Pass &#8594; 신규 토픽 &#8594; 자동 수집 트리거 (v5 목표)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- JA -->
+  <div class="pipeline-flow" data-lang-ja-block>
+    <div class="pipe-layer l1">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 1: Raw（収集）</div>
+      <div class="pipe-items">
+        <div class="pipe-tag"><strong>--delta</strong> &nbsp;87chのApifyクロール（隔週cron）</div>
+        <div class="pipe-tag"><strong>--url</strong> &nbsp;単一URLの即時変換</div>
+        <div class="pipe-tag"><strong>--inbox</strong> &nbsp;クロスプロジェクトのインサイト（4プロジェクト）</div>
+        <div class="pipe-tag"><strong>--discover</strong> &nbsp;モバイルObsidian + MAGI_Mobile</div>
+        <div class="pipe-tag"><strong>--codemap</strong> &nbsp;プロジェクトのコード構造抽出</div>
+      </div>
+    </div>
+    <div class="pipe-connector">&#9660;</div>
+    <div class="pipe-layer l2">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 2: Wiki（精製）— 968p / 7タイプ / 11カテゴリ</div>
+      <div class="pipe-items">
+        <div class="pipe-tag">LLM分類 &#8594; SCHEMA準拠のfrontmatter生成</div>
+        <div class="pipe-tag">SC top-3 &#8594; Related自動付与（curator-light）</div>
+        <div class="pipe-tag">Lint L-01〜L-19 &#8594; 品質ゲート</div>
+        <div class="pipe-tag">CHK-01〜11 &#8594; 構造的整合性チェック</div>
+        <div class="pipe-tag">Reflection Pass &#8594; 矛盾 + 新規トピック検出</div>
+        <div class="pipe-tag">--re-embed &#8594; Pineconeベクトル自動同期</div>
+        <div class="pipe-tag">InfraNodus &#8594; グラフ分析 + ギャップ/偏り検出</div>
+      </div>
+    </div>
+    <div class="pipe-connector">&#9660;</div>
+    <div class="pipe-layer l3">
+      <div class="pipe-head"><span class="pipe-dot"></span>Layer 3: Query（活用）</div>
+      <div class="pipe-items">
+        <div class="pipe-tag">SC search_notes &#8594; セマンティック類似検索</div>
+        <div class="pipe-tag">Pinecone search &#8594; メタデータフィルタ検索</div>
+        <div class="pipe-tag">wiki-advisor &#8594; ハイブリッド統合 + 履歴記録</div>
+        <div class="pipe-tag">SessionStart hint &#8594; _inbox 通知</div>
+      </div>
+      <div class="feedback-zone">
+        <div class="fz-label">フィードバックループ（双方向）</div>
+        <div class="pipe-items">
+          <div class="pipe-tag">プロジェクト実務 &#8594; インサイト発見 &#8594; _inbox 逆保存 &#8594; Wiki強化</div>
+          <div class="pipe-tag">Reflection Pass &#8594; 新規トピック &#8594; 自動収集トリガー（v5目標）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 5. GAP ANALYSIS ==================== -->
+<section id="gaps">
+  <div class="section-label">Section 05</div>
+  <h2 class="section-heading">
+    <span data-lang-en>Weakness &amp; Improvement Analysis</span>
+    <span data-lang-ko>약점 &amp; 개선 분석</span>
+    <span data-lang-ja>弱点＆改善ポイント分析</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>Honest assessment of current limitations across all three layers.</span>
+    <span data-lang-ko>3개 레이어 전체에 걸친 현재 한계의 솔직한 평가.</span>
+    <span data-lang-ja>3レイヤー全体にわたる現時点の限界に対する率直な評価。</span>
+  </p>
+
+  <!-- EN -->
+  <div class="gap-cols" data-lang-en-grid>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>Collection Layer</div>
+      <div class="gap-item">
+        <div class="gap-item-title">Source Diversity</div>
+        <div class="gap-now">YouTube 87ch + web only</div>
+        <div class="gap-next">arXiv RSS, GitHub trending, HN, newsletters</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Collection Frequency</div>
+        <div class="gap-now">Biweekly cron + session manual</div>
+        <div class="gap-next">Daily lightweight delta (1-2 per channel)</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Source Discovery</div>
+        <div class="gap-now">Manual channel list management</div>
+        <div class="gap-next">Wiki keyword-based auto-recommendation</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Crawler Resilience</div>
+        <div class="gap-now">Single Apify crawler</div>
+        <div class="gap-next">Multi-crawler or direct API fallback</div>
+      </div>
+    </div>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>Refinement Layer</div>
+      <div class="gap-item">
+        <div class="gap-item-title">Knowledge Lifecycle</div>
+        <div class="gap-now">Manual active/deprecated toggle</div>
+        <div class="gap-next">Freshness model — last ref + decay rate &#8594; auto stale marking</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Relation Typing</div>
+        <div class="gap-now">Similarity-based only</div>
+        <div class="gap-next">relation_type field (supports / contradicts / extends)</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Contradiction Detection</div>
+        <div class="gap-now">Only at ingest time (Reflection)</div>
+        <div class="gap-next">Periodic cross-page contradiction scan</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Model Dependency</div>
+        <div class="gap-now">Single LLM model dependency</div>
+        <div class="gap-next">Model abstraction layer + fallback chain</div>
+      </div>
+    </div>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>Query Layer</div>
+      <div class="gap-item">
+        <div class="gap-item-title">Active Injection</div>
+        <div class="gap-now">Manual advisor calls only</div>
+        <div class="gap-next">Context-aware auto-injection — file/error &#8594; wiki suggest</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Query Feedback</div>
+        <div class="gap-now">No usefulness data accumulated</div>
+        <div class="gap-next">1-bit useful/not feedback &#8594; search weight learning</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">Cross-Project Search</div>
+        <div class="gap-now">Separate advisor calls per project</div>
+        <div class="gap-next">Unified search endpoint (MCP server)</div>
+      </div>
+    </div>
+  </div>
+  <!-- KO -->
+  <div class="gap-cols" data-lang-ko-grid>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>수집 레이어</div>
+      <div class="gap-item">
+        <div class="gap-item-title">소스 다양성</div>
+        <div class="gap-now">YouTube 87채널 + 웹 전용</div>
+        <div class="gap-next">arXiv RSS, GitHub 트렌딩, HN, 뉴스레터</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">수집 주기</div>
+        <div class="gap-now">격주 크론 + 세션 수동</div>
+        <div class="gap-next">일간 경량 delta (채널당 1-2건)</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">소스 발견</div>
+        <div class="gap-now">수동 채널 목록 관리</div>
+        <div class="gap-next">위키 키워드 기반 자동 추천</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">크롤러 내성</div>
+        <div class="gap-now">단일 Apify 크롤러</div>
+        <div class="gap-next">멀티 크롤러 또는 직접 API 폴백</div>
+      </div>
+    </div>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>정제 레이어</div>
+      <div class="gap-item">
+        <div class="gap-item-title">지식 생애주기</div>
+        <div class="gap-now">수동 active/deprecated 전환</div>
+        <div class="gap-next">신선도 모델 — 마지막 참조 + 감쇠율 &#8594; 자동 stale 표시</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">관계 유형화</div>
+        <div class="gap-now">유사도 기반만</div>
+        <div class="gap-next">relation_type 필드 (supports / contradicts / extends)</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">모순 감지</div>
+        <div class="gap-now">수집 시점에만 (Reflection)</div>
+        <div class="gap-next">주기적 페이지 간 모순 스캔</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">모델 의존성</div>
+        <div class="gap-now">단일 LLM 모델 의존</div>
+        <div class="gap-next">모델 추상화 레이어 + 폴백 체인</div>
+      </div>
+    </div>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>활용 레이어</div>
+      <div class="gap-item">
+        <div class="gap-item-title">능동적 주입</div>
+        <div class="gap-now">수동 advisor 호출만</div>
+        <div class="gap-next">컨텍스트 인식 자동 주입 — 파일/에러 &#8594; 위키 제안</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">쿼리 피드백</div>
+        <div class="gap-now">유용성 데이터 축적 없음</div>
+        <div class="gap-next">1-bit 유용/비유용 피드백 &#8594; 검색 가중치 학습</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">크로스프로젝트 검색</div>
+        <div class="gap-now">프로젝트별 별도 advisor 호출</div>
+        <div class="gap-next">통합 검색 엔드포인트 (MCP 서버)</div>
+      </div>
+    </div>
+  </div>
+  <!-- JA -->
+  <div class="gap-cols" data-lang-ja-grid>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>収集レイヤー</div>
+      <div class="gap-item">
+        <div class="gap-item-title">ソースの多様性</div>
+        <div class="gap-now">YouTube 87ch + Webのみ</div>
+        <div class="gap-next">arXiv RSS、GitHubトレンド、HN、ニュースレター</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">収集頻度</div>
+        <div class="gap-now">隔週cron + セッション手動</div>
+        <div class="gap-next">日次軽量delta（チャンネルあたり1〜2件）</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">ソース発見</div>
+        <div class="gap-now">チャンネルリストの手動管理</div>
+        <div class="gap-next">Wikiキーワードベースの自動レコメンド</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">クローラーの耐性</div>
+        <div class="gap-now">単一Apifyクローラー</div>
+        <div class="gap-next">マルチクローラー、または直接APIフォールバック</div>
+      </div>
+    </div>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>精製レイヤー</div>
+      <div class="gap-item">
+        <div class="gap-item-title">知識のライフサイクル</div>
+        <div class="gap-now">active/deprecated の手動切替</div>
+        <div class="gap-next">鮮度モデル — 最終参照 + 減衰率 &#8594; 自動でstale表示</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">リレーションの型付け</div>
+        <div class="gap-now">類似度ベースのみ</div>
+        <div class="gap-next">relation_type フィールド（supports / contradicts / extends）</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">矛盾検出</div>
+        <div class="gap-now">収集時のみ（Reflection）</div>
+        <div class="gap-next">ページ横断の定期的な矛盾スキャン</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">モデル依存</div>
+        <div class="gap-now">単一LLMモデルへの依存</div>
+        <div class="gap-next">モデル抽象化レイヤー + フォールバックチェーン</div>
+      </div>
+    </div>
+    <div class="gap-panel">
+      <div class="gap-head"><span class="gh-dot"></span>活用レイヤー</div>
+      <div class="gap-item">
+        <div class="gap-item-title">能動的注入</div>
+        <div class="gap-now">advisorの手動呼び出しのみ</div>
+        <div class="gap-next">コンテキスト認識型の自動注入 — ファイル/エラー &#8594; Wiki提案</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">クエリフィードバック</div>
+        <div class="gap-now">有用性データの蓄積なし</div>
+        <div class="gap-next">1-bit の役立った/役立たずフィードバック &#8594; 検索重みの学習</div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-item-title">クロスプロジェクト検索</div>
+        <div class="gap-now">プロジェクトごとに個別advisor呼び出し</div>
+        <div class="gap-next">統合検索エンドポイント（MCPサーバー）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 6. V5 DIRECTION ==================== -->
+<section id="v5">
+  <div class="section-label">Section 06</div>
+  <h2 class="section-heading">
+    <span data-lang-en>v5 Direction — Self-Evolving Knowledge Organism</span>
+    <span data-lang-ko>v5 방향 — 자가 진화 지식 유기체</span>
+    <span data-lang-ja>v5ビジョン — 自己進化する知識有機体</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>The next frontier: a wiki that knows what it doesn't know.</span>
+    <span data-lang-ko>다음 프론티어: 자신이 모르는 것을 아는 위키.</span>
+    <span data-lang-ja>次なるフロンティア：自らが「知らないこと」を知るウィキ。</span>
+  </p>
+
+  <!-- EN -->
+  <div class="v5-grid" data-lang-en-grid>
+    <div class="v5-card" data-n="01">
+      <h4>Temporal Awareness</h4>
+      <div class="v5-sub">Knowledge has an expiration date</div>
+      <ul>
+        <li>Freshness score per page (last ref + field decay rate)</li>
+        <li>Stale page auto-detection &#8594; re-collect trigger or deprecate</li>
+        <li>"Written 6 months ago, never referenced, 3 new sources arrived" &#8594; auto-refresh candidate</li>
+      </ul>
+    </div>
+    <div class="v5-card" data-n="02">
+      <h4>Proactive Gap Detection</h4>
+      <div class="v5-sub">The wiki knows what it doesn't know</div>
+      <ul>
+        <li>Real-time mini gap analysis on each new page ingest</li>
+        <li>"This page should bridge cluster X but no bridge exists" — instant detection</li>
+        <li>External trend gap: "Trending in channels but absent in wiki" auto-identification</li>
+      </ul>
+    </div>
+    <div class="v5-card" data-n="03">
+      <h4>Query-Driven Evolution</h4>
+      <div class="v5-sub">Demand shapes supply</div>
+      <ul>
+        <li>Query pattern analysis &#8594; "frequently searched but results are thin"</li>
+        <li>Auto-prioritize collection for under-served topics</li>
+        <li>"5 searches for 'serverless cold start' in 10 sessions, only 1 wiki page" &#8594; auto-collect trigger</li>
+      </ul>
+    </div>
+  </div>
+  <!-- KO -->
+  <div class="v5-grid" data-lang-ko-grid>
+    <div class="v5-card" data-n="01">
+      <h4>시간 인식</h4>
+      <div class="v5-sub">지식에는 유효기간이 있다</div>
+      <ul>
+        <li>페이지별 신선도 점수 (마지막 참조 + 필드 감쇠율)</li>
+        <li>오래된 페이지 자동 감지 &#8594; 재수집 트리거 또는 deprecated 처리</li>
+        <li>"6개월 전 작성, 참조 0회, 신규 소스 3건 도착" &#8594; 자동 갱신 후보</li>
+      </ul>
+    </div>
+    <div class="v5-card" data-n="02">
+      <h4>능동적 갭 감지</h4>
+      <div class="v5-sub">위키가 자신의 빈틈을 안다</div>
+      <ul>
+        <li>새 페이지 수집 시 실시간 미니 갭 분석</li>
+        <li>"이 페이지가 클러스터 X를 연결해야 하는데 브릿지가 없다" — 즉시 감지</li>
+        <li>외부 트렌드 갭: "채널에서 트렌딩이지만 위키에 없음" 자동 식별</li>
+      </ul>
+    </div>
+    <div class="v5-card" data-n="03">
+      <h4>쿼리 기반 진화</h4>
+      <div class="v5-sub">수요가 공급을 결정한다</div>
+      <ul>
+        <li>쿼리 패턴 분석 &#8594; "자주 검색되지만 결과가 빈약한" 토픽</li>
+        <li>부족한 토픽의 수집 자동 우선순위화</li>
+        <li>"10세션에서 'serverless cold start' 5회 검색, 위키 1페이지" &#8594; 자동 수집 트리거</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EN sprint -->
+  <div class="sprint-box" data-lang-en-block>
+    <h4>v5 Sprint 0 — Minimum Viable Self-Evolution</h4>
+    <div class="sprint-items">
+      <div class="sprint-item">
+        <span class="si-num">01</span>
+        <h5>Freshness Score</h5>
+        <p>frontmatter freshness_score auto-calculated from: last updated + reference frequency + field decay rate</p>
+      </div>
+      <div class="sprint-item">
+        <span class="si-num">02</span>
+        <h5>Query Log Accumulation</h5>
+        <p>Every advisor call logs: query + result count + satisfaction. Already designed (F-2) but no real data yet.</p>
+      </div>
+      <div class="sprint-item">
+        <span class="si-num">03</span>
+        <h5>L-20 Freshness Warning</h5>
+        <p>Lint rule that flags stale pages — "the wiki knows where it's getting old"</p>
+      </div>
+    </div>
+  </div>
+  <!-- KO sprint -->
+  <div class="sprint-box" data-lang-ko-block>
+    <h4>v5 Sprint 0 — 최소 자가 진화 구현</h4>
+    <div class="sprint-items">
+      <div class="sprint-item">
+        <span class="si-num">01</span>
+        <h5>신선도 점수</h5>
+        <p>frontmatter freshness_score 자동 산출: 마지막 수정일 + 참조 빈도 + 필드 감쇠율</p>
+      </div>
+      <div class="sprint-item">
+        <span class="si-num">02</span>
+        <h5>쿼리 로그 축적</h5>
+        <p>모든 advisor 호출 기록: 쿼리 + 결과 수 + 만족도. 설계 완료(F-2)이나 실데이터 미축적.</p>
+      </div>
+      <div class="sprint-item">
+        <span class="si-num">03</span>
+        <h5>L-20 신선도 경고</h5>
+        <p>오래된 페이지를 감지하는 린트 규칙 — "위키가 어디가 낡았는지 안다"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- JA -->
+  <div class="v5-grid" data-lang-ja-grid>
+    <div class="v5-card" data-n="01">
+      <h4>時間認識</h4>
+      <div class="v5-sub">知識には賞味期限がある</div>
+      <ul>
+        <li>ページごとの鮮度スコア（最終参照 + フィールド減衰率）</li>
+        <li>古いページを自動検出 &#8594; 再収集トリガー、または deprecated 処理</li>
+        <li>「6か月前に作成、参照0回、新規ソース3件到着」&#8594; 自動更新候補</li>
+      </ul>
+    </div>
+    <div class="v5-card" data-n="02">
+      <h4>能動的ギャップ検出</h4>
+      <div class="v5-sub">Wikiが自らの欠落を知る</div>
+      <ul>
+        <li>新ページ収集時にリアルタイムのミニギャップ分析</li>
+        <li>「このページはクラスタXを橋渡しすべきなのにブリッジが無い」— 即時検出</li>
+        <li>外部トレンドギャップ：「チャンネルではトレンドなのにWikiに無い」を自動識別</li>
+      </ul>
+    </div>
+    <div class="v5-card" data-n="03">
+      <h4>クエリ駆動の進化</h4>
+      <div class="v5-sub">需要が供給を形づくる</div>
+      <ul>
+        <li>クエリパターン分析 &#8594; 「頻繁に検索されるのに結果が薄い」トピック</li>
+        <li>不足トピックの収集を自動で優先度付け</li>
+        <li>「10セッション中『serverless cold start』を5回検索、Wikiは1ページ」&#8594; 自動収集トリガー</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- JA sprint -->
+  <div class="sprint-box" data-lang-ja-block>
+    <h4>v5 Sprint 0 — 最小の自己進化実装</h4>
+    <div class="sprint-items">
+      <div class="sprint-item">
+        <span class="si-num">01</span>
+        <h5>鮮度スコア</h5>
+        <p>frontmatter freshness_score を自動算出：最終更新日 + 参照頻度 + フィールド減衰率</p>
+      </div>
+      <div class="sprint-item">
+        <span class="si-num">02</span>
+        <h5>クエリログの蓄積</h5>
+        <p>すべての advisor 呼び出しを記録：クエリ + 結果数 + 満足度。設計済（F-2）だが実データ未蓄積。</p>
+      </div>
+      <div class="sprint-item">
+        <span class="si-num">03</span>
+        <h5>L-20 鮮度ワーニング</h5>
+        <p>古いページを検知する Lint ルール — 「Wikiが、どこが古びているかを自ら知る」</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 7. INSIGHT ==================== -->
+<section id="insight">
+  <div class="section-label">Section 07</div>
+  <h2 class="section-heading">
+    <span data-lang-en>The Missing Piece</span>
+    <span data-lang-ko>빠진 한 조각</span>
+    <span data-lang-ja>欠けたピース</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>What separates a database that responds from one that grows.</span>
+    <span data-lang-ko>응답하는 데이터베이스와 성장하는 데이터베이스를 가르는 것.</span>
+    <span data-lang-ja>「応答するデータベース」と「成長するデータベース」を分かつもの。</span>
+  </p>
+
+  <!-- EN -->
+  <div class="insight-block" data-lang-en-block>
+    <div class="quote-mark">"</div>
+    <p>
+      We have proven that a wiki can be <strong>bidirectional</strong> (project insights flow back) and <strong>self-diagnosing</strong> (InfraNodus detects structural imbalance).
+      But the ultimate goal remains: <strong>the wiki that asks its own questions</strong>.
+    </p>
+    <p style="margin-top:1rem;">
+      Today, a human runs InfraNodus and interprets the gaps. Tomorrow, the wiki should say <em>"I am weak in this area"</em> and autonomously collect sources to fill that gap.
+      That's the difference between a database that <em>responds</em> and one that <em>grows</em>.
+    </p>
+    <div class="evo-line">v1: Tools &#8594; v2: Team &#8594; v3: Automation &#8594; v4: Integrity &#8594; v5: Self-Evolution</div>
+    <div class="insight-sig">— MAGI-wiki CTO Analysis, Session 278</div>
+  </div>
+  <!-- KO -->
+  <div class="insight-block" data-lang-ko-block>
+    <div class="quote-mark">"</div>
+    <p>
+      위키가 <strong>양방향</strong>이 될 수 있고(프로젝트 인사이트가 역류) <strong>자가 진단</strong>할 수 있음(InfraNodus가 구조적 불균형을 감지)을 증명했다.
+      하지만 궁극적 목표는 남아 있다: <strong>스스로 질문을 던지는 위키</strong>.
+    </p>
+    <p style="margin-top:1rem;">
+      오늘은 인간이 InfraNodus를 돌리고 갭을 해석한다. 내일은 위키가 <em>"이 영역이 약하다"</em>고 말하며 자율적으로 소스를 수집해 그 갭을 채워야 한다.
+      그것이 <em>응답하는</em> 데이터베이스와 <em>성장하는</em> 데이터베이스의 차이다.
+    </p>
+    <div class="evo-line">v1: 도구 &#8594; v2: 팀 &#8594; v3: 자동화 &#8594; v4: 무결성 &#8594; v5: 자가 진화</div>
+    <div class="insight-sig">— MAGI-wiki CTO 분석, 세션 278</div>
+  </div>
+  <!-- JA -->
+  <div class="insight-block" data-lang-ja-block>
+    <div class="quote-mark">"</div>
+    <p>
+      我々は、Wikiが<strong>双方向</strong>たりうること（プロジェクトのインサイトが逆流する）と、<strong>自己診断</strong>しうること（InfraNodusが構造的不均衡を検出する）を証明してきた。
+      だが究極の目標はなお残されている：<strong>みずから問いを立てるWiki</strong>である。
+    </p>
+    <p style="margin-top:1rem;">
+      今日は、人間がInfraNodusを走らせギャップを解釈している。明日には、Wikiが<em>「この領域は手薄だ」</em>と告げ、自律的にソースを収集してそのギャップを埋めるべきだ。
+      それこそが、<em>応答する</em>データベースと<em>成長する</em>データベースを分かつ違いである。
+    </p>
+    <div class="evo-line">v1: ツール &#8594; v2: チーム &#8594; v3: 自動化 &#8594; v4: 整合性 &#8594; v5: 自己進化</div>
+    <div class="insight-sig">— MAGI-wiki CTO 分析、セッション278</div>
+  </div>
+</section>
+
+<!-- ==================== 8. SOURCE TEXT ==================== -->
+<section id="source-text" class="source-text-section">
+  <div class="section-label">Section 08</div>
+  <h2 class="section-heading">
+    <span data-lang-en>Source Analysis Text</span>
+    <span data-lang-ko>원문 분석 텍스트</span>
+    <span data-lang-ja>原文分析テキスト</span>
+  </h2>
+  <p class="section-sub">
+    <span data-lang-en>The complete original analysis text used to build this dashboard, from Session 278.</span>
+    <span data-lang-ko>이 대시보드 구축에 사용된 세션 278의 전체 원문 분석 텍스트.</span>
+    <span data-lang-ja>本ダッシュボード構築に用いたセッション278の分析原文全文。</span>
+  </p>
+
+  <div class="source-toc">
+    <h3>
+      <span data-lang-en>Table of Contents</span>
+      <span data-lang-ko>목차</span>
+      <span data-lang-ja>目次</span>
+    </h3>
+    <ol>
+      <li><a href="#src-1">v1~v4 4세대 진화 (Evolution Timeline)</a></li>
+      <li><a href="#src-2">v3 vs v4 상세 비교 (Detailed Comparison)</a></li>
+      <li><a href="#src-3">MAGI-wiki 철학 — 살아있는 데이터베이스 (Philosophy)</a></li>
+      <li><a href="#src-4">Raw → Wiki → Query 파이프라인 분석 (Pipeline)</a></li>
+      <li><a href="#src-5">약점 및 개선 방향 (Gap Analysis)</a></li>
+      <li><a href="#src-6">v5 방향성 — 자가 진화 지식 유기체 (v5 Direction)</a></li>
+      <li><a href="#src-7">종합 인사이트 (Insight)</a></li>
+    </ol>
+  </div>
+
+  <div class="source-block" id="src-1">
+    <h3>01. v1~v4 4세대 진화 (Evolution Timeline)</h3>
+    <div class="src-body"><strong>v1 — Foundation: "도구를 만들다" (세션 206~215)</strong>
+
+Karpathy의 LLM Wiki 아이디어에서 출발하여 독립 레포로 마이그레이션하고, wiki_ingest.py 핵심 수집 엔진을 구축했다. SCHEMA v1(7가지 콘텐츠 타입: source, guide, concept, incident, decision, entity, synthesis)을 정의하고, Lint 규칙 L-01~L-10을 도입하여 품질 게이트를 확립했다. Pinecone에 벡터 저장소를 구축하고, _inbox(크로스프로젝트 역저장)와 _discover(사용자 인사이트) 두 가지 입력 경로를 설계했다. GitHub Actions를 이용한 격주 자동 수집 워크플로우를 구현하여 87개 채널에서 지속적으로 콘텐츠를 수집하는 파이프라인의 기초를 놓았다.
+
+<hr class="src-divider">
+<strong>v2 — Orchestration: "팀을 구성하다" (세션 224~227)</strong>
+
+단일 스크립트 체제에서 4-에이전트 팀 체제로 전환했다. ingest-agent(수집), lint-agent(품질), curator-agent(관계 관리, light/deep 이중 모드), advisor-agent(하이브리드 검색)를 구성하여 IQEQ(Ingest-Quality-Evaluate-Query) 체제를 확립했다. 크로스프로젝트 역저장 시스템을 완성하여 F_MAGI, M_MAGI, C_MAGI, ALLTHAT 등 타 프로젝트에서 발생한 인사이트가 _inbox를 통해 자동으로 위키에 유입되는 양방향 지식 흐름을 구축했다. reflection_log를 도입하여 수집 시점의 모순과 신규 토픽을 기록하기 시작했다.
+
+<hr class="src-divider">
+<strong>v3 — Autonomy: "팀이 스스로 돌아가다" (세션 243~247)</strong>
+
+이벤트 드리븐 아키텍처를 도입하여 ingest→lint→curator-light 3단계 자동 체이닝을 구현했다. git diff 기반 증분 처리로 변경된 파일만 처리하는 효율성을 확보했다. agent_log에 승인율을 추적하고, 승인율에 따라 에이전트 자율 등급이 자동 전환되는 피드백 루프를 구축했다. retry_queue와 채널 쿨다운을 도입하여 수집 실패에 대한 내성을 강화했다. SC(Smart Connections, 시맨틱 검색)와 Pinecone(메타데이터 필터 검색)을 하이브리드로 병합하는 advisor 검색을 완성했다. 코드맵 자동 감지(git diff 5파일 임계)를 통해 Step 3.10에서 자동으로 코드맵 갱신을 제안하는 시스템을 도입했다.
+
+<hr class="src-divider">
+<strong>v4 — Integrity: "빈틈을 봉합하다" (세션 252~275)</strong>
+
+v3까지의 자율 운영 체제 위에 데이터 무결성과 그래프 균형이라는 구조적 완성도를 추가했다. --re-embed CLI를 통한 3경로 동기화(committed + working tree + untracked)로 Pinecone drift 0 기준선을 확립했다. video_id 기반 URL 중복 제거를 3경로(delta/url/discover) 전체에 적용했다. LLM 콘텐츠 자동 분류를 도입하여 채널 상속 방식의 카테고리 할당을 콘텐츠 분석 기반으로 전환했고, 402p를 재분류하여 235건을 반영했다. 12쌍의 중복 source를 병합하면서 모든 참조를 무손실 이관했다. SCHEMA.md를 단일 진실 원천(Single Source of Truth)으로 확립하여 모든 스크립트가 여기서 파생되도록 했다. InfraNodus를 활용한 A-18 그래프 리밸런싱으로 Code Engineering 43% 단일 슈퍼노드를 QA 27% / AI Infra 26% / Data Research 21%의 3축 균형 구조로 전환했다. INC-027 해결을 위한 규모 기반 LLM 라우팅(&lt;5KB / 5-15KB / &gt;15KB 3분기 + two-step 분리)을 구현했다. L-19 규칙으로 Related 섹션의 ID→title 교체를 341파일 742건에 걸쳐 수행하고, 사전 감지 린트를 추가했다. 13개 레거시 스크립트를 git rm으로 완전 제거하고 README를 현대화했다.</div>
+  </div>
+
+  <div class="source-block" id="src-2">
+    <h3>02. v3 vs v4 상세 비교 (Detailed Comparison)</h3>
+    <div class="src-body"><strong>v3의 핵심: 팀 자율 운영</strong>
+v3의 본질은 "만들어 놓은 도구(v1)와 팀(v2)이 인간 개입 없이 스스로 돌아가게 하는 것"이었다. 이벤트 드리븐 체이닝, 증분 처리, 승인율 피드백 루프, retry/cooldown 내성, 하이브리드 검색, 코드맵 자동 감지 등 6개 축으로 자율성을 확보했다.
+
+<strong>v4의 핵심: 데이터 무결성</strong>
+v4는 "자율적으로 잘 돌아가지만 쌓인 데이터의 정합성에 구멍이 있다"는 감사(audit) 결과에서 출발했다. v4.0.0(세션 252)에서 파이프라인 프로세스 감사(H-1~H-5), 18개 스크립트 전량 분석(N-1~N-4), 리스크 레지스터(R-1~R-10)를 작성한 뒤, Sprint 0~2를 설계하여 순차적으로 완결했다.
+
+<strong>비유적 비교</strong>
+v3 = "공장이 24시간 자동으로 돌아간다"
+v4 = "공장에서 나오는 제품의 불량률을 0%에 근접시켰다"
+
+<strong>구체적 수치 비교</strong>
+- 임베딩 동기화: v3 없음 → v4 --re-embed 3경로 감지, drift 0
+- URL 중복: v3 존재(12쌍) → v4 전량 병합 + 3경로 dedup
+- 카테고리 정확도: v3 채널 상속 → v4 LLM 분석(235건 재분류)
+- 그래프 편향: v3 Code Eng 43% → v4 3축 균형 27%/26%/21%
+- Related 표시: v3 ID 그대로 → v4 title 교체(742건/341파일)
+- 레거시: v3 13개 스크립트 잔존 → v4 전량 제거</div>
+  </div>
+
+  <div class="source-block" id="src-3">
+    <h3>03. MAGI-wiki 철학 — 살아있는 데이터베이스 (Philosophy)</h3>
+    <div class="src-body"><strong>전통 DB의 한계</strong>
+전통적인 데이터베이스는 단방향이다. 인간이 데이터를 입력하고, DB가 저장하고, 인간이 쿼리하면 정적인 결과를 반환한다. 데이터는 진화하지 않고, 교차 참조를 스스로 생성하지 않으며, 구조적 결함을 자가 진단하지 못한다. 한 마디로 "죽어 있는 저장소"다.
+
+<strong>RAG의 한계</strong>
+RAG(Retrieval-Augmented Generation)는 질문이 들어오면 임베딩하고, 관련 청크를 검색하고, LLM이 합성하여 답변한다. 하지만 근본적인 문제가 있다: 매번 처음부터 다시 합성한다. 이전에 같은 질문에 대해 훌륭한 답변을 생성했어도, 그 합성 결과는 어디에도 저장되지 않는다. 지식이 축적(compound)되지 않는 것이다. "RE-synthesis from ZERO"가 RAG의 근본 한계다.
+
+<strong>MAGI-wiki의 패러다임</strong>
+MAGI-wiki는 이 두 가지를 넘어서는 패러다임을 추구한다:
+
+1. <em>지식 복리 효과(Knowledge Compounding)</em>: RAG가 매번 제로에서 재합성하는 반면, MAGI-wiki는 교차 참조를 사전에 구축한다. 새 페이지가 추가되면 기존 그래프를 풍부하게 한다. 한 번 정제된 지식은 다음 정제의 기반이 된다. SYN-001이 이 성숙도 전환을 증명했다: "설치 매뉴얼 → 검증 시스템 → 자율 성장"이라는 3단계를 실측 데이터로 확인했다.
+
+2. <em>양방향 흐름(Bidirectional Flow)</em>: 프로젝트에서 실무를 하다가 발견한 인사이트가 _inbox를 통해 위키로 역류한다. 위키에 축적된 지식이 다시 프로젝트에 주입된다. F_MAGI에서 BullMQ 비동기 패턴을 발견하면 → _inbox로 역저장 → 위키에서 정제 → 다음에 M_MAGI가 비슷한 문제를 만났을 때 위키에서 참조. 단방향이 아닌 살아있는 순환이다.
+
+3. <em>자가 진단(Self-Diagnosis)</em>: InfraNodus 그래프 분석을 통해 자동으로 갭과 편향을 감지한다. A-18에서 Code Engineering이 43%로 편향되어 있음을 감지하고, 구조적 개입(카테고리 리밸런싱 + 교차 링크 보강)을 수행한 뒤, 재측정으로 효과를 검증했다(27%로 감소). 지식 구조가 스스로 모니터링하고 리밸런싱하는 것이다.
+
+<strong>수치적 증거</strong>
+- Reflection 71건 중 84%(60건)가 명시적 리뷰 없이 자연 흡수됨 → 지식 그래프가 "자율 성장" 단계에 진입한 증거 (세션 272 실측)
+- Code Engineering 43% → 3축 균형(QA 27% / AI Infra 26% / Data 21%) → A-18 4-phase 구조적 개입의 효과 검증 (세션 267 실측)
+- 12쌍 중복 source 무손실 병합 → 참조 완전 이관 확인 (세션 258 실측)
+
+<strong>Karpathy LLM Wiki → MAGI Extension</strong>
+Karpathy의 원본은 "LLM으로 위키를 만들자"는 아이디어였다. 1-레이어 수동 체제, 파이프라인 자동화 없음, 그래프 분석 없음, 피드백 루프 없음. MAGI는 이를 3-레이어 아키텍처(Raw/Wiki/Schema), 4-에이전트 팀(IQEQ), InfraNodus 그래프 분석, 크로스프로젝트 양방향 흐름, 87채널 자동 수집 파이프라인, Reflection Pass 자가 검증, 968p + drift 0 무결성으로 확장했다.</div>
+  </div>
+
+  <div class="source-block" id="src-4">
+    <h3>04. Raw → Wiki → Query 파이프라인 분석 (Pipeline)</h3>
+    <div class="src-body"><strong>Layer 1: Raw (수집)</strong>
+5가지 수집 경로를 통해 원시 콘텐츠를 수집한다:
+- --delta: 87개 채널에서 Apify를 이용한 격주 자동 크롤(YouTube 47 + repo 20 + search 9 + web 5 + reddit 6)
+- --url: 단일 URL을 즉시 위키 페이지로 변환
+- --inbox: F_MAGI, M_MAGI, C_MAGI, ALLTHAT 등 크로스프로젝트에서 역저장된 인사이트를 자동 변환
+- --discover: 모바일 Obsidian 보관함(MAGI_Mobile)과 content/_discover/에서 사용자가 직접 발견한 URL/메모를 처리
+- --codemap: 타 프로젝트의 코드 구조를 자동 추출하여 위키 가이드 페이지로 생성
+
+<strong>Layer 2: Wiki (정제)</strong>
+수집된 원시 데이터를 7가지 품질 게이트를 통해 정제한다:
+- LLM 분류: 콘텐츠를 분석하여 SCHEMA v2.0 규격에 맞는 frontmatter(타입, 카테고리, 태그, related)를 자동 생성
+- SC top-3 Related: Smart Connections로 유사도 기반 상위 3건을 자동 연결(curator-light)
+- 린트 L-01~L-19: 19개 품질 규칙으로 frontmatter 필수 필드, 카테고리 유효성, Related 형식 등을 검증
+- CHK-01~11: 11개 구조적 정합성 검사(index ↔ 물리 파일 ↔ Pinecone 벡터 ↔ DYNAMIC 수치 ↔ 양방향 backlink)
+- Reflection Pass: 수집 시점에 기존 위키와의 모순과 신규 토픽을 감지하여 daily_logs/reflections/에 기록
+- --re-embed: Pinecone 벡터 저장소와 물리 파일의 차이를 3경로로 감지하여 자동 동기화
+- InfraNodus: 전체 위키를 그래프로 분석하여 클러스터 구조, 갭, 편향을 감지
+
+<strong>Layer 3: Query (활용)</strong>
+정제된 지식을 4가지 방식으로 활용한다:
+- SC search_notes: 자연어 질문으로 시맨틱 유사도 기반 위키 검색
+- Pinecone search: category, super_category 등 메타데이터 필터로 정밀 검색
+- wiki-advisor: SC와 Pinecone 결과를 하이브리드로 병합하고 이력을 기록
+- SessionStart hint: 세션 시작 시 _inbox 미처리 건수를 자동 알림
+
+<strong>피드백 루프 (양방향)</strong>
+- 순방향: Raw → Wiki → Query (수집 → 정제 → 활용)
+- 역방향: 프로젝트 실무 → 인사이트 발견 → _inbox 역저장 → 위키 강화
+- 자가 순환: Reflection Pass → 신규 토픽 발견 → 자동 수집 트리거 (v5 목표)</div>
+  </div>
+
+  <div class="source-block" id="src-5">
+    <h3>05. 약점 및 개선 방향 (Gap Analysis)</h3>
+    <div class="src-body"><strong>수집 레이어 약점</strong>
+1. 소스 다양성: 현재 YouTube 87채널 + 웹 페이지만 수집. arXiv RSS, GitHub Trending, Hacker News, 뉴스레터 등 학술/트렌드 채널이 부재. 개선 방향: 멀티 소스 어댑터 도입.
+2. 수집 주기: 격주 크론 + 세션 수동 실행. 빠르게 변화하는 기술 트렌드에 지연 발생. 개선 방향: 일간 경량 delta(채널당 1-2건).
+3. 소스 발견: 수동으로 채널 목록을 관리. 새로운 양질의 채널을 놓칠 수 있음. 개선 방향: 위키 키워드 기반 자동 채널 추천.
+4. 크롤러 내성: 단일 Apify 크롤러에 의존. Apify 장애 시 전체 수집 중단. 개선 방향: 멀티 크롤러 또는 직접 API 폴백.
+
+<strong>정제 레이어 약점</strong>
+1. 지식 생애주기: 페이지의 active/deprecated 상태를 수동으로 전환. 오래된 정보가 자동으로 표시되지 않음. 개선 방향: 신선도 모델(마지막 참조 + 감쇠율 → 자동 stale 표시).
+2. 관계 유형화: 현재 related 관계는 유사도 기반뿐. "지지한다(supports) / 모순된다(contradicts) / 확장한다(extends)" 같은 의미론적 관계 부재. 개선 방향: relation_type 필드 도입.
+3. 모순 감지: Reflection Pass가 수집 시점에만 동작. 기존 페이지 간 모순은 감지하지 못함. 개선 방향: 주기적 크로스 페이지 모순 스캔.
+4. 모델 의존성: 단일 LLM 모델(Claude)에 의존. 모델 변경이나 장애 시 전체 파이프라인 영향. 개선 방향: 모델 추상화 레이어 + 폴백 체인.
+
+<strong>활용 레이어 약점</strong>
+1. 능동적 주입: advisor를 수동으로 호출해야만 위키 지식이 활용됨. 코딩 중 자동으로 관련 위키를 제안하지 않음. 개선 방향: 컨텍스트 인식 자동 주입(파일/에러 → 위키 제안).
+2. 쿼리 피드백: 검색 결과의 유용성 데이터가 축적되지 않음. 어떤 페이지가 실제로 도움이 되었는지 알 수 없음. 개선 방향: 1-bit 유용/비유용 피드백 → 검색 가중치 학습.
+3. 크로스프로젝트 검색: 프로젝트별로 별도의 advisor를 호출해야 함. 통합 검색 인터페이스 부재. 개선 방향: 통합 검색 엔드포인트(MCP 서버).</div>
+  </div>
+
+  <div class="source-block" id="src-6">
+    <h3>06. v5 방향성 — 자가 진화 지식 유기체 (v5 Direction)</h3>
+    <div class="src-body"><strong>1. 시간 인식 (Temporal Awareness)</strong>
+지식에는 유효기간이 있다. 6개월 전에 작성되고, 이후 한 번도 참조되지 않았으며, 그 사이 같은 주제에 대한 신규 소스가 3건 도착했다면 — 그 페이지는 갱신 후보다. v5에서는 페이지별 신선도 점수(freshness_score)를 frontmatter에 자동 산출한다. 마지막 수정일, 참조 빈도, 필드별 감쇠율을 조합하여 "이 페이지가 얼마나 신선한가"를 수치화한다. 임계치 이하로 떨어지면 자동으로 재수집 트리거를 발동하거나 deprecated 처리한다.
+
+<strong>2. 능동적 갭 감지 (Proactive Gap Detection)</strong>
+현재의 갭 감지는 InfraNodus를 수동으로 실행하는 방식이다. v5에서는 새 페이지가 수집될 때마다 실시간 미니 갭 분석을 수행한다. "이 페이지가 클러스터 X와 클러스터 Y를 연결해야 하는데 브릿지가 없다" — 이런 것을 즉시 감지한다. 나아가 외부 트렌드 갭("채널에서 트렌딩이지만 위키에 없는" 토픽)도 자동으로 식별한다.
+
+<strong>3. 쿼리 기반 진화 (Query-Driven Evolution)</strong>
+수요가 공급을 결정해야 한다. advisor 검색 로그를 분석하여 "자주 검색되지만 결과가 빈약한" 토픽을 식별하고, 해당 토픽의 수집을 자동으로 우선순위화한다. "10세션에서 'serverless cold start'를 5회 검색했는데 위키 페이지가 1개뿐" → 자동 수집 트리거가 발동되어 관련 소스를 찾아 위키화한다.
+
+<strong>v5 Sprint 0 — 최소 자가 진화 구현</strong>
+1. Freshness Score: frontmatter freshness_score 자동 산출. 마지막 수정일 + 참조 빈도 + 필드 감쇠율.
+2. Query Log Accumulation: 모든 advisor 호출을 기록. 쿼리 + 결과 수 + 만족도. 설계는 완료(F-2)되어 있으나 실데이터 미축적.
+3. L-20 Freshness Warning: 오래된 페이지를 감지하는 린트 규칙. "위키가 어디가 낡았는지 안다."</div>
+  </div>
+
+  <div class="source-block" id="src-7">
+    <h3>07. 종합 인사이트 (Insight)</h3>
+    <div class="src-body"><strong>증명된 것과 아직 증명되지 않은 것</strong>
+
+MAGI-wiki v1~v4를 거치며 두 가지를 증명했다:
+1. 위키가 <em>양방향</em>이 될 수 있다 — 프로젝트 인사이트가 _inbox를 통해 역류하고, 위키 지식이 다시 프로젝트에 주입되는 순환이 실제로 작동한다.
+2. 위키가 <em>자가 진단</em>할 수 있다 — InfraNodus가 구조적 불균형(Code Engineering 43% 편향)을 감지하고, 구조적 개입(A-18 4-phase)으로 3축 균형(27%/26%/21%)을 달성한 뒤, 재측정으로 효과를 검증할 수 있다.
+
+하지만 궁극적 목표는 아직 달성되지 않았다: <em>스스로 질문을 던지는 위키</em>.
+
+오늘은 인간이 InfraNodus를 돌리고 갭을 해석한다. 내일은 위키가 "이 영역이 약하다"고 말하며 자율적으로 소스를 수집해 그 갭을 채워야 한다. 그것이 "응답하는 데이터베이스"와 "성장하는 데이터베이스"의 차이다.
+
+<strong>진화 궤적</strong>
+v1: 도구(Tools) → v2: 팀(Team) → v3: 자동화(Automation) → v4: 무결성(Integrity) → v5: 자가 진화(Self-Evolution)
+
+이 궤적은 소프트웨어 공학의 성숙도 모델(CMM)과 유사하다. Level 1(초기, 혼돈) → Level 2(반복 가능) → Level 3(정의됨) → Level 4(관리됨) → Level 5(최적화). MAGI-wiki는 v4에서 Level 4(관리됨 — drift 0, 정합성 검증, 그래프 모니터링)를 달성했고, v5에서 Level 5(최적화 — 자가 개선, 능동적 갭 해소)를 목표로 한다.
+
+<strong>빅데이터의 다음 방향</strong>
+인간이 트리거하되 AI가 정제·연결·진단하는 "살아있는 데이터베이스"가 AI 에이전트 시대에서 빅데이터의 다음 방향이다. 기존 단방향 DB의 한계(저장만 하고 진화하지 않음)와 RAG의 한계(축적 없이 매번 재합성)를 넘어서, 지식이 복리로 축적되고, 양방향으로 순환하며, 스스로 구조를 진단하고 개선하는 패러다임. 이것이 MAGI-wiki가 968페이지, 278세션에 걸쳐 실증하고 있는 방향이다.
+
+— MAGI-wiki CTO 분석, 세션 278, 2026-04-17</div>
+  </div>
+</section>
+
+</div>
+
+<footer class="site-footer">
+  MAGI-WIKI OVERVIEW — GENERATED 2026-04-17 — V4.5.3 — SESSION 278
+</footer>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+// Language Toggle
+(function() {
+  const btns = document.querySelectorAll('.lang-btn');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const lang = btn.dataset.lang;
+      document.body.classList.toggle('lang-ko', lang === 'ko');
+      document.body.classList.toggle('lang-ja', lang === 'ja');
+      document.documentElement.lang = lang;
+    });
+  });
+})();
+
+// Nav Scroll Effect
+(function() {
+  const nav = document.getElementById('mainNav');
+  let last = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 60);
+    last = y;
+  }, { passive: true });
+})();
+
+// Particle Network Canvas (Enhanced)
+(function() {
+  const canvas = document.getElementById('graphCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [], mouse = { x: null, y: null, radius: 180 };
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = canvas.width = rect.width;
+    h = canvas.height = rect.height;
+  }
+
+  function createParticles() {
+    particles = [];
+    const count = Math.min(Math.floor((w * h) / 10000), 100);
+    const colors = [
+      { r: 0, g: 212, b: 255 },   // cyan
+      { r: 240, g: 168, b: 48 },   // amber
+      { r: 138, g: 96, b: 255 },   // violet
+      { r: 0, g: 232, b: 138 },    // green
+    ];
+    for (let i = 0; i < count; i++) {
+      const c = colors[Math.floor(Math.random() * colors.length)];
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        r: Math.random() * 2 + 0.8,
+        color: c,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.01 + Math.random() * 0.02
+      });
+    }
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  canvas.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.pulse += p.pulseSpeed;
+
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+
+      // Mouse interaction
+      if (mouse.x !== null) {
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouse.radius) {
+          const force = (mouse.radius - dist) / mouse.radius * 0.008;
+          p.vx += dx * force;
+          p.vy += dy * force;
+        }
+      }
+
+      // Dampen velocity
+      p.vx *= 0.999;
+      p.vy *= 0.999;
+
+      const alpha = 0.3 + Math.sin(p.pulse) * 0.2;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${alpha})`;
+      ctx.fill();
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${alpha * 0.08})`;
+      ctx.fill();
+
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 160) {
+          const lineAlpha = (1 - dist / 160) * 0.08;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(0,212,255,${lineAlpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  createParticles();
+  draw();
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+})();
+
+// Counter Animation
+(function() {
+  const counters = document.querySelectorAll('.stat-val[data-count]');
+  let triggered = false;
+
+  function animate() {
+    if (triggered) return;
+    triggered = true;
+    counters.forEach(el => {
+      const target = parseInt(el.dataset.count);
+      const duration = 2000;
+      const start = performance.now();
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        el.textContent = Math.round(target * eased);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  setTimeout(animate, 1000);
+})();
+
+// Scroll Reveal with staggered delays
+(function() {
+  const sections = document.querySelectorAll('section:not(.hero)');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+  sections.forEach(s => observer.observe(s));
+})();
+
+// Nav Active Link
+(function() {
+  const links = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('section[id]');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 140) {
+        current = s.id;
+      }
+    });
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>
