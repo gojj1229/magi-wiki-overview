@@ -219,6 +219,15 @@ li[data-lang-base] { display: list-item; }
 body.lang-ja [data-lang-base] { display: none; }
 body.lang-ja div[data-lang-base] { display: none; }
 body.lang-ja li[data-lang-base] { display: none; }
+
+/* li 마커 보정: en/ko/ja-block li가 list-item으로 표시되도록 */
+li[data-lang-en-block] { display: list-item; }
+li[data-lang-ko-block] { display: none; }
+li[data-lang-ja-block] { display: none; }
+body.lang-ko li[data-lang-en-block] { display: none; }
+body.lang-ko li[data-lang-ko-block] { display: list-item; }
+body.lang-ja li[data-lang-en-block] { display: none; }
+body.lang-ja li[data-lang-ko-block] { display: none; }
 body.lang-ja li[data-lang-ja-block] { display: list-item; }
 
 /* ==================== NAV ==================== */
