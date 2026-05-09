@@ -173,46 +173,49 @@ body::after {
 }
 
 /* Translation visibility */
-[data-lang-ko] { display: none; }
-[data-lang-ja] { display: none; }
-[data-lang-en] { display: inline; }
+/* inline 그룹 — body prefix로 specificity 강화 + 누락 rule 보강 */
+body [data-lang-en] { display: inline; }
+body [data-lang-ko] { display: none; }
+body [data-lang-ja] { display: none; }
 body.lang-ko [data-lang-ko] { display: inline; }
 body.lang-ko [data-lang-en] { display: none; }
+body.lang-ko [data-lang-ja] { display: none; }
 body.lang-ja [data-lang-ja] { display: inline; }
 body.lang-ja [data-lang-en] { display: none; }
 body.lang-ja [data-lang-ko] { display: none; }
-[data-lang-ko-block] { display: none; }
-[data-lang-ja-block] { display: none; }
-[data-lang-en-block] { display: block; }
-body.lang-ko [data-lang-ko-block] { display: block; }
-body.lang-ko [data-lang-en-block] { display: none; }
-body.lang-ja [data-lang-ja-block] { display: block; }
-body.lang-ja [data-lang-en-block] { display: none; }
-body.lang-ja [data-lang-ko-block] { display: none; }
-div[data-lang-ko-block] { display: none; }
-div[data-lang-ja-block] { display: none; }
-div[data-lang-en-block] { display: block; }
-body.lang-ko div[data-lang-ko-block] { display: block; }
-body.lang-ko div[data-lang-en-block] { display: none; }
-body.lang-ja div[data-lang-ja-block] { display: block; }
-body.lang-ja div[data-lang-en-block] { display: none; }
-body.lang-ja div[data-lang-ko-block] { display: none; }
-[data-lang-ko-flex] { display: none; }
-[data-lang-ja-flex] { display: none; }
-[data-lang-en-flex] { display: flex; }
-body.lang-ko [data-lang-ko-flex] { display: flex; }
-body.lang-ko [data-lang-en-flex] { display: none; }
-body.lang-ja [data-lang-ja-flex] { display: flex; }
-body.lang-ja [data-lang-en-flex] { display: none; }
-body.lang-ja [data-lang-ko-flex] { display: none; }
-[data-lang-ko-grid] { display: none; }
-[data-lang-ja-grid] { display: none; }
-[data-lang-en-grid] { display: grid; }
-body.lang-ko [data-lang-ko-grid] { display: grid; }
-body.lang-ko [data-lang-en-grid] { display: none; }
-body.lang-ja [data-lang-ja-grid] { display: grid; }
-body.lang-ja [data-lang-en-grid] { display: none; }
-body.lang-ja [data-lang-ko-grid] { display: none; }
+
+/* block 그룹 — body prefix + !important로 컨테이너 클래스(.src-body 등) 강제 display override 차단 */
+body [data-lang-en-block] { display: block !important; }
+body [data-lang-ko-block] { display: none !important; }
+body [data-lang-ja-block] { display: none !important; }
+body.lang-ko [data-lang-ko-block] { display: block !important; }
+body.lang-ko [data-lang-en-block] { display: none !important; }
+body.lang-ko [data-lang-ja-block] { display: none !important; }
+body.lang-ja [data-lang-ja-block] { display: block !important; }
+body.lang-ja [data-lang-en-block] { display: none !important; }
+body.lang-ja [data-lang-ko-block] { display: none !important; }
+
+/* flex 그룹 — body prefix + !important로 컨테이너 클래스 override 차단 */
+body [data-lang-en-flex] { display: flex !important; }
+body [data-lang-ko-flex] { display: none !important; }
+body [data-lang-ja-flex] { display: none !important; }
+body.lang-ko [data-lang-ko-flex] { display: flex !important; }
+body.lang-ko [data-lang-en-flex] { display: none !important; }
+body.lang-ko [data-lang-ja-flex] { display: none !important; }
+body.lang-ja [data-lang-ja-flex] { display: flex !important; }
+body.lang-ja [data-lang-en-flex] { display: none !important; }
+body.lang-ja [data-lang-ko-flex] { display: none !important; }
+
+/* grid 그룹 — body prefix + !important로 .evo-track / .compare-wrap / .paradigm-grid / .metrics-row 등의 강제 display:grid override 차단 */
+body [data-lang-en-grid] { display: grid !important; }
+body [data-lang-ko-grid] { display: none !important; }
+body [data-lang-ja-grid] { display: none !important; }
+body.lang-ko [data-lang-ko-grid] { display: grid !important; }
+body.lang-ko [data-lang-en-grid] { display: none !important; }
+body.lang-ko [data-lang-ja-grid] { display: none !important; }
+body.lang-ja [data-lang-ja-grid] { display: grid !important; }
+body.lang-ja [data-lang-en-grid] { display: none !important; }
+body.lang-ja [data-lang-ko-grid] { display: none !important; }
 [data-lang-base] { display: block; }
 div[data-lang-base] { display: block; }
 li[data-lang-base] { display: list-item; }
