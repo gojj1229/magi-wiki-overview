@@ -2636,13 +2636,20 @@ section.visible {
       <span data-lang-ja>目次</span>
     </h3>
     <ol>
-      <li data-lang-base><a href="#src-1">v1~v4 4세대 진화 (Evolution Timeline)</a></li>
-      <li data-lang-base><a href="#src-2">v3 vs v4 상세 비교 (Detailed Comparison)</a></li>
-      <li data-lang-base><a href="#src-3">MAGI-wiki 철학 — 살아있는 데이터베이스 (Philosophy)</a></li>
-      <li data-lang-base><a href="#src-4">Raw → Wiki → Query 파이프라인 분석 (Pipeline)</a></li>
-      <li data-lang-base><a href="#src-5">약점 및 개선 방향 (Gap Analysis)</a></li>
-      <li data-lang-base><a href="#src-6">v5 방향성 — 자가 진화 지식 유기체 (v5 Direction)</a></li>
-      <li data-lang-base><a href="#src-7">종합 인사이트 (Insight)</a></li>
+      <li data-lang-en-block><a href="#src-1">v1–v4 Four-Generation Evolution (Evolution Timeline)</a></li>
+      <li data-lang-en-block><a href="#src-2">v3 vs v4 Detailed Comparison</a></li>
+      <li data-lang-en-block><a href="#src-3">MAGI-wiki Philosophy — A Living Database</a></li>
+      <li data-lang-en-block><a href="#src-4">Raw → Wiki → Query Pipeline Analysis</a></li>
+      <li data-lang-en-block><a href="#src-5">Weaknesses &amp; Improvement Directions (Gap Analysis)</a></li>
+      <li data-lang-en-block><a href="#src-6">v5 Direction — Self-Evolving Knowledge Organism</a></li>
+      <li data-lang-en-block><a href="#src-7">Synthesis &amp; Insight</a></li>
+      <li data-lang-ko-block><a href="#src-1">v1~v4 4세대 진화 (Evolution Timeline)</a></li>
+      <li data-lang-ko-block><a href="#src-2">v3 vs v4 상세 비교 (Detailed Comparison)</a></li>
+      <li data-lang-ko-block><a href="#src-3">MAGI-wiki 철학 — 살아있는 데이터베이스 (Philosophy)</a></li>
+      <li data-lang-ko-block><a href="#src-4">Raw → Wiki → Query 파이프라인 분석 (Pipeline)</a></li>
+      <li data-lang-ko-block><a href="#src-5">약점 및 개선 방향 (Gap Analysis)</a></li>
+      <li data-lang-ko-block><a href="#src-6">v5 방향성 — 자가 진화 지식 유기체 (v5 Direction)</a></li>
+      <li data-lang-ko-block><a href="#src-7">종합 인사이트 (Insight)</a></li>
       <li data-lang-ja-block><a href="#src-1">v1〜v4 4世代の進化（Evolution Timeline）</a></li>
       <li data-lang-ja-block><a href="#src-2">v3 vs v4 詳細比較（Detailed Comparison）</a></li>
       <li data-lang-ja-block><a href="#src-3">MAGI-wiki の哲学 — 生きたデータベース（Philosophy）</a></li>
@@ -2655,10 +2662,29 @@ section.visible {
 
   <div class="source-block" id="src-1">
     <h3>
-      <span data-lang-base>01. v1~v4 4세대 진화 (Evolution Timeline)</span>
+      <span data-lang-en-block>01. v1–v4 Four-Generation Evolution (Evolution Timeline)</span>
+      <span data-lang-ko-block>01. v1~v4 4세대 진화 (Evolution Timeline)</span>
       <span data-lang-ja-block>01. v1〜v4 4世代の進化（Evolution Timeline）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>v1 — Foundation: "도구를 만들다" (세션 206~215)</strong>
+    <div class="src-body" data-lang-en-block><strong>v1 — Foundation: "Build the Tools" (Sessions 206–215)</strong>
+
+Starting from Karpathy's LLM Wiki concept, the project migrated to an independent repository and built the core ingestion engine, wiki_ingest.py. SCHEMA v1 was defined with 7 content types (source, guide, concept, incident, decision, entity, synthesis), and Lint rules L-01–L-10 were introduced to establish quality gates. A vector store was built on Pinecone, and two input paths were designed: _inbox (cross-project reverse-drop) and _discover (user-discovered insights). A bi-weekly automated ingestion workflow was implemented via GitHub Actions, laying the foundation for a pipeline that continuously collects content from 87 channels.
+
+<hr class="src-divider">
+<strong>v2 — Orchestration: "Form the Team" (Sessions 224–227)</strong>
+
+The system transitioned from a single-script regime to a 4-agent team. ingest-agent (collection), lint-agent (quality), curator-agent (relationship management with light/deep dual modes), and advisor-agent (hybrid search) were composed to establish the IQEQ (Ingest-Quality-Evaluate-Query) framework. The cross-project reverse-drop system was completed, building a bidirectional knowledge flow where insights from F_MAGI, M_MAGI, C_MAGI, ALLTHAT, and other projects automatically flow into the wiki via _inbox. reflection_log was introduced to begin recording contradictions and emerging topics at the moment of collection.
+
+<hr class="src-divider">
+<strong>v3 — Autonomy: "The Team Runs Itself" (Sessions 243–247)</strong>
+
+An event-driven architecture was introduced, implementing the 3-stage automatic chaining of ingest→lint→curator-light. git diff-based incremental processing handled only modified files, securing efficiency. Approval rates were tracked in agent_log, building a feedback loop that automatically transitions agent autonomy levels based on those rates. retry_queue and channel cooldown were introduced to strengthen resilience against collection failures. The advisor search was completed by hybrid-merging SC (Smart Connections, semantic search) and Pinecone (metadata-filter search). Codemap auto-detection (5-file git diff threshold) was introduced, automatically suggesting codemap updates at Step 3.10.
+
+<hr class="src-divider">
+<strong>v4 — Integrity: "Seal the Gaps" (Sessions 252–275)</strong>
+
+On top of the autonomous operations regime built through v3, structural completeness was added in the form of data integrity and graph balance. The --re-embed CLI established a Pinecone drift 0 baseline through 3-path synchronization (committed + working tree + untracked). video_id-based URL deduplication was applied across all 3 paths (delta/url/discover). LLM-based automatic content classification was introduced, replacing channel-inherited category assignment with content-analysis-based assignment, and 402 pages were reclassified, applying 235 changes. 12 pairs of duplicate sources were merged, transferring all references losslessly. SCHEMA.md was established as the Single Source of Truth, with all scripts deriving from it. InfraNodus-driven A-18 graph rebalancing transformed a single Code Engineering 43% supernode into a 3-axis balanced structure (QA 27% / AI Infra 26% / Data Research 21%). Size-based LLM routing was implemented to resolve INC-027 (&lt;5KB / 5–15KB / &gt;15KB triage + two-step split). L-19 rules executed Related-section ID→title replacement across 742 instances in 341 files, and a pre-detection lint was added. 13 legacy scripts were fully removed via git rm, and the README was modernized.</div>
+    <div class="src-body" data-lang-ko-block><strong>v1 — Foundation: "도구를 만들다" (세션 206~215)</strong>
 
 Karpathy의 LLM Wiki 아이디어에서 출발하여 독립 레포로 마이그레이션하고, wiki_ingest.py 핵심 수집 엔진을 구축했다. SCHEMA v1(7가지 콘텐츠 타입: source, guide, concept, incident, decision, entity, synthesis)을 정의하고, Lint 규칙 L-01~L-10을 도입하여 품질 게이트를 확립했다. Pinecone에 벡터 저장소를 구축하고, _inbox(크로스프로젝트 역저장)와 _discover(사용자 인사이트) 두 가지 입력 경로를 설계했다. GitHub Actions를 이용한 격주 자동 수집 워크플로우를 구현하여 87개 채널에서 지속적으로 콘텐츠를 수집하는 파이프라인의 기초를 놓았다.
 
@@ -2698,10 +2724,28 @@ v3 までの自律運用体制の上に、データ整合性とグラフバラ�
 
   <div class="source-block" id="src-2">
     <h3>
-      <span data-lang-base>02. v3 vs v4 상세 비교 (Detailed Comparison)</span>
+      <span data-lang-en-block>02. v3 vs v4 Detailed Comparison</span>
+      <span data-lang-ko-block>02. v3 vs v4 상세 비교 (Detailed Comparison)</span>
       <span data-lang-ja-block>02. v3 vs v4 詳細比較（Detailed Comparison）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>v3의 핵심: 팀 자율 운영</strong>
+    <div class="src-body" data-lang-en-block><strong>v3's core: team autonomous operation</strong>
+v3's essence was "letting the tools (v1) and team (v2) we built run on their own without human intervention." Autonomy was secured along 6 axes: event-driven chaining, incremental processing, approval-rate feedback loops, retry/cooldown resilience, hybrid search, and codemap auto-detection.
+
+<strong>v4's core: data integrity</strong>
+v4 began from the audit conclusion that "the system runs autonomously, but the integrity of accumulated data has gaps." At v4.0.0 (Session 252), pipeline process audits (H-1–H-5), full analysis of 18 scripts (N-1–N-4), and a risk register (R-1–R-10) were drawn up, after which Sprints 0–2 were designed and completed in sequence.
+
+<strong>Analogy</strong>
+v3 = "A factory runs automatically 24/7"
+v4 = "We pushed the defect rate of products coming out of that factory close to 0%"
+
+<strong>Concrete numerical comparison</strong>
+- Embedding sync: v3 none → v4 --re-embed 3-path detection, drift 0
+- URL duplicates: v3 present (12 pairs) → v4 fully merged + 3-path dedup
+- Category accuracy: v3 channel inheritance → v4 LLM analysis (235 reclassifications)
+- Graph bias: v3 Code Eng 43% → v4 3-axis balance 27% / 26% / 21%
+- Related display: v3 raw IDs → v4 title replacement (742 cases / 341 files)
+- Legacy: v3 13 scripts remaining → v4 all removed</div>
+    <div class="src-body" data-lang-ko-block><strong>v3의 핵심: 팀 자율 운영</strong>
 v3의 본질은 "만들어 놓은 도구(v1)와 팀(v2)이 인간 개입 없이 스스로 돌아가게 하는 것"이었다. 이벤트 드리븐 체이닝, 증분 처리, 승인율 피드백 루프, retry/cooldown 내성, 하이브리드 검색, 코드맵 자동 감지 등 6개 축으로 자율성을 확보했다.
 
 <strong>v4의 핵심: 데이터 무결성</strong>
@@ -2739,10 +2783,33 @@ v4 =「工場から出てくる製品の不良率を 0% に近づけた」
 
   <div class="source-block" id="src-3">
     <h3>
-      <span data-lang-base>03. MAGI-wiki 철학 — 살아있는 데이터베이스 (Philosophy)</span>
+      <span data-lang-en-block>03. MAGI-wiki Philosophy — A Living Database</span>
+      <span data-lang-ko-block>03. MAGI-wiki 철학 — 살아있는 데이터베이스 (Philosophy)</span>
       <span data-lang-ja-block>03. MAGI-wiki の哲学 — 生きたデータベース（Philosophy）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>전통 DB의 한계</strong>
+    <div class="src-body" data-lang-en-block><strong>Limits of traditional DBs</strong>
+A traditional database is unidirectional. Humans input data, the DB stores it, humans query it, and a static result is returned. Data does not evolve, cross-references are not generated autonomously, and structural defects cannot be self-diagnosed. In short: a "dead repository."
+
+<strong>Limits of RAG</strong>
+RAG (Retrieval-Augmented Generation) embeds incoming questions, retrieves relevant chunks, and synthesizes an answer via an LLM. But there is a fundamental problem: it re-synthesizes from scratch every time. Even if a brilliant answer was generated for the same question before, that synthesis result is stored nowhere. Knowledge does not compound. "RE-synthesis from ZERO" is the root limit of RAG.
+
+<strong>MAGI-wiki's paradigm</strong>
+MAGI-wiki pursues a paradigm that goes beyond both:
+
+1. <em>Knowledge Compounding</em>: Whereas RAG re-synthesizes from zero each time, MAGI-wiki builds cross-references in advance. Each new page enriches the existing graph. Once-refined knowledge becomes the foundation for the next refinement. SYN-001 demonstrated this maturity transition: the 3 stages of "installation manual → verification system → autonomous growth" were confirmed with empirical data.
+
+2. <em>Bidirectional Flow</em>: Insights discovered while doing real work in projects flow back into the wiki via _inbox. Knowledge accumulated in the wiki then flows back into projects. Discovering BullMQ async patterns in F_MAGI → reverse-dropping into _inbox → refining in the wiki → next time M_MAGI faces a similar problem, referencing the wiki. Not unidirectional, but a living circulation.
+
+3. <em>Self-Diagnosis</em>: InfraNodus graph analysis automatically detects gaps and biases. A-18 detected that Code Engineering was biased at 43%, executed structural intervention (category rebalancing + cross-link reinforcement), and verified the effect via re-measurement (reduced to 27%). A knowledge structure that monitors and rebalances itself.
+
+<strong>Numerical evidence</strong>
+- Of 71 reflections, 84% (60) were absorbed naturally without explicit review → evidence that the knowledge graph has entered the "autonomous growth" stage (Session 272 measurement)
+- Code Engineering 43% → 3-axis balance (QA 27% / AI Infra 26% / Data 21%) → effect verification of the A-18 4-phase structural intervention (Session 267 measurement)
+- 12 pairs of duplicate sources losslessly merged → reference transfer fully verified (Session 258 measurement)
+
+<strong>Karpathy LLM Wiki → MAGI Extension</strong>
+Karpathy's original was the idea of "let's build a wiki with an LLM." A 1-layer manual regime, no pipeline automation, no graph analysis, no feedback loop. MAGI extended this into a 3-layer architecture (Raw/Wiki/Schema), a 4-agent team (IQEQ), InfraNodus graph analysis, cross-project bidirectional flow, an 87-channel automated ingestion pipeline, Reflection Pass for self-verification, and 968 pages with drift 0 integrity.</div>
+    <div class="src-body" data-lang-ko-block><strong>전통 DB의 한계</strong>
 전통적인 데이터베이스는 단방향이다. 인간이 데이터를 입력하고, DB가 저장하고, 인간이 쿼리하면 정적인 결과를 반환한다. 데이터는 진화하지 않고, 교차 참조를 스스로 생성하지 않으며, 구조적 결함을 자가 진단하지 못한다. 한 마디로 "죽어 있는 저장소"다.
 
 <strong>RAG의 한계</strong>
@@ -2790,10 +2857,40 @@ Karpathy の原案は「LLM で Wiki を作ろう」というアイデアだっ�
 
   <div class="source-block" id="src-4">
     <h3>
-      <span data-lang-base>04. Raw → Wiki → Query 파이프라인 분석 (Pipeline)</span>
+      <span data-lang-en-block>04. Raw → Wiki → Query Pipeline Analysis</span>
+      <span data-lang-ko-block>04. Raw → Wiki → Query 파이프라인 분석 (Pipeline)</span>
       <span data-lang-ja-block>04. Raw → Wiki → Query パイプライン分析（Pipeline）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>Layer 1: Raw (수집)</strong>
+    <div class="src-body" data-lang-en-block><strong>Layer 1: Raw (Collection)</strong>
+Raw content is collected via 5 ingestion paths:
+- --delta: Bi-weekly automated crawl from 87 channels via Apify (YouTube 47 + repo 20 + search 9 + web 5 + reddit 6)
+- --url: Convert a single URL into a wiki page on demand
+- --inbox: Auto-convert reverse-dropped insights from cross-projects (F_MAGI, M_MAGI, C_MAGI, ALLTHAT, etc.)
+- --discover: Process URLs/notes discovered directly by the user in the mobile Obsidian vault (MAGI_Mobile) and content/_discover/
+- --codemap: Automatically extract the code structure of other projects and generate them as wiki guide pages
+
+<strong>Layer 2: Wiki (Refinement)</strong>
+Collected raw data is refined through 7 quality gates:
+- LLM classification: Analyze content and auto-generate frontmatter (type, category, tags, related) per SCHEMA v2.0
+- SC top-3 Related: Auto-link the top 3 similarity matches via Smart Connections (curator-light)
+- Lint L-01–L-19: Validate frontmatter required fields, category validity, Related format, etc., via 19 quality rules
+- CHK-01–11: 11 structural integrity checks (index ↔ physical files ↔ Pinecone vectors ↔ DYNAMIC numerics ↔ bidirectional backlinks)
+- Reflection Pass: Detect contradictions with existing wiki and emerging topics at the moment of collection, recording in daily_logs/reflections/
+- --re-embed: Detect differences between Pinecone vector store and physical files via 3 paths, syncing automatically
+- InfraNodus: Analyze the entire wiki as a graph, detecting cluster structure, gaps, and bias
+
+<strong>Layer 3: Query (Utilization)</strong>
+Refined knowledge is utilized via 4 methods:
+- SC search_notes: Semantic-similarity-based wiki search via natural-language questions
+- Pinecone search: Precise search via metadata filters such as category, super_category
+- wiki-advisor: Hybrid merge of SC and Pinecone results, with history logging
+- SessionStart hint: Auto-notify _inbox unprocessed counts at session start
+
+<strong>Feedback loop (bidirectional)</strong>
+- Forward: Raw → Wiki → Query (collect → refine → utilize)
+- Reverse: Project work → insight discovery → _inbox reverse-drop → wiki strengthening
+- Self-circulation: Reflection Pass → emerging topic discovery → automated collection trigger (v5 goal)</div>
+    <div class="src-body" data-lang-ko-block><strong>Layer 1: Raw (수집)</strong>
 5가지 수집 경로를 통해 원시 콘텐츠를 수집한다:
 - --delta: 87개 채널에서 Apify를 이용한 격주 자동 크롤(YouTube 47 + repo 20 + search 9 + web 5 + reddit 6)
 - --url: 단일 URL을 즉시 위키 페이지로 변환
@@ -2855,10 +2952,27 @@ Karpathy の原案は「LLM で Wiki を作ろう」というアイデアだっ�
 
   <div class="source-block" id="src-5">
     <h3>
-      <span data-lang-base>05. 약점 및 개선 방향 (Gap Analysis)</span>
+      <span data-lang-en-block>05. Weaknesses &amp; Improvement Directions (Gap Analysis)</span>
+      <span data-lang-ko-block>05. 약점 및 개선 방향 (Gap Analysis)</span>
       <span data-lang-ja-block>05. 弱点と改善方向（Gap Analysis）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>수집 레이어 약점</strong>
+    <div class="src-body" data-lang-en-block><strong>Collection-layer weaknesses</strong>
+1. Source diversity: Currently collects only YouTube 87 channels + web pages. Academic/trend channels such as arXiv RSS, GitHub Trending, Hacker News, and newsletters are absent. Improvement: introduce multi-source adapters.
+2. Collection cycle: Bi-weekly cron + manual session execution. Latency arises against fast-moving tech trends. Improvement: daily lightweight delta (1–2 items per channel).
+3. Source discovery: Channel list managed manually. New high-quality channels can be missed. Improvement: wiki-keyword-based automatic channel recommendation.
+4. Crawler resilience: Single-Apify-crawler dependency. Apify outage halts all collection. Improvement: multi-crawler or direct API fallback.
+
+<strong>Refinement-layer weaknesses</strong>
+1. Knowledge lifecycle: Page active/deprecated state toggled manually. Outdated information is not auto-flagged. Improvement: freshness model (last reference + decay rate → auto-stale flagging).
+2. Relationship typing: Currently `related` relationships are similarity-based only. Semantic relationships such as "supports / contradicts / extends" are absent. Improvement: introduce a `relation_type` field.
+3. Contradiction detection: Reflection Pass operates only at collection time. Contradictions between existing pages are not detected. Improvement: periodic cross-page contradiction scans.
+4. Model dependency: Single-LLM (Claude) dependency. Model changes or outages affect the entire pipeline. Improvement: model abstraction layer + fallback chain.
+
+<strong>Utilization-layer weaknesses</strong>
+1. Active injection: Wiki knowledge is utilized only when advisor is invoked manually. Related wiki is not auto-suggested during coding. Improvement: context-aware auto-injection (file/error → wiki suggestion).
+2. Query feedback: Usefulness data of search results is not accumulated. Which pages actually helped is unknown. Improvement: 1-bit useful/not-useful feedback → search-weight learning.
+3. Cross-project search: A separate advisor must be invoked per project. A unified search interface is absent. Improvement: unified search endpoint (MCP server).</div>
+    <div class="src-body" data-lang-ko-block><strong>수집 레이어 약점</strong>
 1. 소스 다양성: 현재 YouTube 87채널 + 웹 페이지만 수집. arXiv RSS, GitHub Trending, Hacker News, 뉴스레터 등 학술/트렌드 채널이 부재. 개선 방향: 멀티 소스 어댑터 도입.
 2. 수집 주기: 격주 크론 + 세션 수동 실행. 빠르게 변화하는 기술 트렌드에 지연 발생. 개선 방향: 일간 경량 delta(채널당 1-2건).
 3. 소스 발견: 수동으로 채널 목록을 관리. 새로운 양질의 채널을 놓칠 수 있음. 개선 방향: 위키 키워드 기반 자동 채널 추천.
@@ -2894,10 +3008,24 @@ Karpathy の原案は「LLM で Wiki を作ろう」というアイデアだっ�
 
   <div class="source-block" id="src-6">
     <h3>
-      <span data-lang-base>06. v5 방향성 — 자가 진화 지식 유기체 (v5 Direction)</span>
+      <span data-lang-en-block>06. v5 Direction — Self-Evolving Knowledge Organism</span>
+      <span data-lang-ko-block>06. v5 방향성 — 자가 진화 지식 유기체 (v5 Direction)</span>
       <span data-lang-ja-block>06. v5 ビジョン — 自己進化する知識有機体（v5 Direction）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>1. 시간 인식 (Temporal Awareness)</strong>
+    <div class="src-body" data-lang-en-block><strong>1. Temporal Awareness</strong>
+Knowledge has a shelf life. If a page was written 6 months ago, has not been referenced since, and 3 new sources on the same topic have arrived in the meantime — that page is a candidate for refresh. In v5, a per-page freshness score (`freshness_score`) is auto-computed in the frontmatter. Combining last-modified date, reference frequency, and field-specific decay rates, we quantify "how fresh is this page." If it falls below a threshold, an automatic re-collection trigger fires or the page is marked deprecated.
+
+<strong>2. Proactive Gap Detection</strong>
+Current gap detection requires manually running InfraNodus. In v5, a real-time mini gap analysis runs whenever a new page is collected. "This page should bridge cluster X and cluster Y, but the bridge is missing" — such cases are detected immediately. Furthermore, external trend gaps ("trending in channels but absent from the wiki") are also auto-identified.
+
+<strong>3. Query-Driven Evolution</strong>
+Demand should shape supply. By analyzing advisor search logs, "frequently searched but result-poor" topics are identified, and ingestion of those topics is auto-prioritized. "In the last 10 sessions, 'serverless cold start' was searched 5 times but only 1 wiki page exists" → an automated collection trigger fires, finds related sources, and wiki-fies them.
+
+<strong>v5 Sprint 0 — Minimal Self-Evolution Implementation</strong>
+1. Freshness Score: Auto-compute `freshness_score` in frontmatter. Last-modified + reference frequency + field decay rate.
+2. Query Log Accumulation: Record every advisor invocation. Query + result count + satisfaction. Designed (F-2) but no real data accumulated yet.
+3. L-20 Freshness Warning: Lint rule that detects stale pages. "The wiki knows where it is getting old."</div>
+    <div class="src-body" data-lang-ko-block><strong>1. 시간 인식 (Temporal Awareness)</strong>
 지식에는 유효기간이 있다. 6개월 전에 작성되고, 이후 한 번도 참조되지 않았으며, 그 사이 같은 주제에 대한 신규 소스가 3건 도착했다면 — 그 페이지는 갱신 후보다. v5에서는 페이지별 신선도 점수(freshness_score)를 frontmatter에 자동 산출한다. 마지막 수정일, 참조 빈도, 필드별 감쇠율을 조합하여 "이 페이지가 얼마나 신선한가"를 수치화한다. 임계치 이하로 떨어지면 자동으로 재수집 트리거를 발동하거나 deprecated 처리한다.
 
 <strong>2. 능동적 갭 감지 (Proactive Gap Detection)</strong>
@@ -2927,10 +3055,30 @@ Karpathy の原案は「LLM で Wiki を作ろう」というアイデアだっ�
 
   <div class="source-block" id="src-7">
     <h3>
-      <span data-lang-base>07. 종합 인사이트 (Insight)</span>
+      <span data-lang-en-block>07. Synthesis &amp; Insight</span>
+      <span data-lang-ko-block>07. 종합 인사이트 (Insight)</span>
       <span data-lang-ja-block>07. 総合インサイト（Insight）</span>
     </h3>
-    <div class="src-body" data-lang-base><strong>증명된 것과 아직 증명되지 않은 것</strong>
+    <div class="src-body" data-lang-en-block><strong>What has been proven and what has not</strong>
+
+Through MAGI-wiki v1–v4, two things have been proven:
+1. A wiki can be <em>bidirectional</em> — project insights flow back via _inbox, and wiki knowledge flows back into projects, in a cycle that actually works.
+2. A wiki can <em>self-diagnose</em> — InfraNodus detects structural imbalance (Code Engineering 43% bias), structural intervention (A-18 4-phase) achieves 3-axis balance (27% / 26% / 21%), and re-measurement verifies the effect.
+
+But the ultimate goal has not yet been reached: <em>a wiki that asks its own questions</em>.
+
+Today, a human runs InfraNodus and interprets the gaps. Tomorrow, the wiki must say "this area is weak" and autonomously collect sources to fill that gap. That is the difference between a "responding database" and a "growing database."
+
+<strong>Evolution trajectory</strong>
+v1: Tools → v2: Team → v3: Automation → v4: Integrity → v5: Self-Evolution
+
+This trajectory parallels the software-engineering Capability Maturity Model (CMM). Level 1 (Initial, chaotic) → Level 2 (Repeatable) → Level 3 (Defined) → Level 4 (Managed) → Level 5 (Optimizing). MAGI-wiki achieved Level 4 at v4 (Managed — drift 0, integrity verification, graph monitoring) and aims for Level 5 at v5 (Optimizing — self-improvement, proactive gap closure).
+
+<strong>Big data's next direction</strong>
+A "living database" — triggered by humans but refined, connected, and diagnosed by AI — is the next direction for big data in the AI agent era. Going beyond the limits of traditional unidirectional DBs (which only store and never evolve) and the limits of RAG (which re-synthesizes every time without accumulation), this is a paradigm in which knowledge accumulates with compound interest, circulates bidirectionally, and self-diagnoses and self-improves its structure. This is the direction MAGI-wiki has been demonstrating across 968 pages and 278 sessions.
+
+— MAGI-wiki CTO analysis, Session 278, 2026-04-17</div>
+    <div class="src-body" data-lang-ko-block><strong>증명된 것과 아직 증명되지 않은 것</strong>
 
 MAGI-wiki v1~v4를 거치며 두 가지를 증명했다:
 1. 위키가 <em>양방향</em>이 될 수 있다 — 프로젝트 인사이트가 _inbox를 통해 역류하고, 위키 지식이 다시 프로젝트에 주입되는 순환이 실제로 작동한다.
