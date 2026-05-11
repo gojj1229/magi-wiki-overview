@@ -52,6 +52,10 @@
   --violet-dim:  rgba(138,96,255,0.08);
   --violet-glow: rgba(138,96,255,0.30);
 
+  --magenta:      #ff5cb8;
+  --magenta-dim:  rgba(255,92,184,0.08);
+  --magenta-glow: rgba(255,92,184,0.30);
+
   --radius-sm:   8px;
   --radius-md:   14px;
   --radius-lg:   20px;
@@ -551,8 +555,8 @@ section.visible {
 .evo-track {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
 }
 .evo-track::before {
   content: '';
@@ -561,7 +565,7 @@ section.visible {
   left: 5%;
   right: 5%;
   height: 2px;
-  background: linear-gradient(90deg, var(--green), var(--cyan), var(--violet), var(--amber));
+  background: linear-gradient(90deg, var(--green), var(--cyan), var(--violet), var(--amber), var(--magenta));
   opacity: 0.2;
   border-radius: 1px;
 }
@@ -594,6 +598,7 @@ section.visible {
 .evo-card[data-v="2"]::before { background: radial-gradient(ellipse at top, rgba(0,212,255,0.06), transparent 70%); }
 .evo-card[data-v="3"]::before { background: radial-gradient(ellipse at top, rgba(138,96,255,0.06), transparent 70%); }
 .evo-card[data-v="4"]::before { background: radial-gradient(ellipse at top, rgba(240,168,48,0.06), transparent 70%); }
+.evo-card[data-v="5"]::before { background: radial-gradient(ellipse at top, rgba(255,92,184,0.06), transparent 70%); }
 .evo-dot {
   width: 14px; height: 14px;
   border-radius: 50%;
@@ -607,6 +612,7 @@ section.visible {
 .evo-card[data-v="2"] .evo-dot { background: var(--cyan); box-shadow: 0 0 16px var(--cyan-glow); }
 .evo-card[data-v="3"] .evo-dot { background: var(--violet); box-shadow: 0 0 16px var(--violet-glow); }
 .evo-card[data-v="4"] .evo-dot { background: var(--amber); box-shadow: 0 0 16px var(--amber-glow); }
+.evo-card[data-v="5"] .evo-dot { background: var(--magenta); box-shadow: 0 0 16px var(--magenta-glow); }
 .evo-ver {
   font-family: 'Fira Code', monospace;
   font-size: 0.72rem;
@@ -619,6 +625,7 @@ section.visible {
 .evo-card[data-v="2"] .evo-ver { color: var(--cyan); text-shadow: 0 0 10px var(--cyan-dim); }
 .evo-card[data-v="3"] .evo-ver { color: var(--violet); text-shadow: 0 0 10px var(--violet-dim); }
 .evo-card[data-v="4"] .evo-ver { color: var(--amber); text-shadow: 0 0 10px var(--amber-dim); }
+.evo-card[data-v="5"] .evo-ver { color: var(--magenta); text-shadow: 0 0 10px var(--magenta-dim); }
 .evo-card h3 {
   font-family: 'Unbounded', sans-serif;
   font-size: 1.2rem;
@@ -654,6 +661,104 @@ section.visible {
 .evo-card[data-v="2"] li::before { background: var(--cyan); }
 .evo-card[data-v="3"] li::before { background: var(--violet); }
 .evo-card[data-v="4"] li::before { background: var(--amber); }
+.evo-card[data-v="5"] li::before { background: var(--magenta); }
+
+.evo-info-toggle {
+  display: inline-block;
+  margin-top: 1.1rem;
+  padding: 0.45rem 0.85rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.evo-info-toggle::after {
+  content: ' ▾';
+  display: inline-block;
+  transition: transform 0.25s;
+}
+.evo-info-toggle.active::after { transform: rotate(180deg); }
+.evo-info-toggle:hover {
+  color: var(--text-bright);
+  background: rgba(255,255,255,0.06);
+}
+.evo-card[data-v="3"] .evo-info-toggle.active { color: var(--violet); border-color: var(--violet); box-shadow: 0 0 14px var(--violet-dim); }
+.evo-card[data-v="4"] .evo-info-toggle.active { color: var(--amber); border-color: var(--amber); box-shadow: 0 0 14px var(--amber-dim); }
+
+.evo-info-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  transition: grid-template-columns 0.35s;
+}
+.evo-info-panels.both-open {
+  grid-template-columns: 1fr 1fr;
+}
+.evo-info-panel {
+  display: none;
+  background: linear-gradient(135deg, rgba(12,26,46,0.8), rgba(12,26,46,0.5));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem 2rem;
+  position: relative;
+  animation: fadeInPanel 0.35s ease-out;
+}
+@keyframes fadeInPanel {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.evo-info-panel.open { display: block; }
+.evo-info-panel[data-v="3"] { border-left: 3px solid var(--violet); }
+.evo-info-panel[data-v="4"] { border-left: 3px solid var(--amber); }
+.evo-info-head {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: var(--text-bright);
+}
+.evo-info-head .tag {
+  display: inline-block;
+  padding: 0.22rem 0.55rem;
+  margin-right: 0.7rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  vertical-align: 2px;
+}
+.evo-info-panel[data-v="3"] .evo-info-head .tag { background: var(--violet-dim); color: var(--violet); }
+.evo-info-panel[data-v="4"] .evo-info-head .tag { background: var(--amber-dim); color: var(--amber); }
+.evo-info-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.evo-info-row:last-child { border-bottom: none; }
+.evo-info-row .axis {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  align-self: center;
+}
+.evo-info-panel[data-v="3"] .axis { color: var(--violet); }
+.evo-info-panel[data-v="4"] .axis { color: var(--amber); }
+.evo-info-row .detail {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.6;
+}
 
 /* ==================== SECTION 2: COMPARISON ==================== */
 .compare-wrap {
@@ -1284,7 +1389,7 @@ section.visible {
 .insight-block p {
   font-size: 1.15rem;
   line-height: 2;
-  max-width: 760px;
+  max-width: 1100px;
   position: relative;
 }
 .insight-block p strong { color: var(--text-bright); }
@@ -1412,6 +1517,7 @@ section.visible {
   .evo-track { grid-template-columns: repeat(2, 1fr); }
   .compare-wrap { grid-template-columns: 1fr; }
   .gap-cols { grid-template-columns: 1fr; }
+  .evo-info-panels.both-open { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
   .main { padding: 0 1.5rem; }
@@ -1421,6 +1527,7 @@ section.visible {
   .diff-grid, .metrics-row, .v5-grid, .sprint-items {
     grid-template-columns: 1fr;
   }
+  .evo-info-row { grid-template-columns: 1fr; gap: 0.2rem; }
   .origin-compare {
     grid-template-columns: 1fr;
   }
@@ -1449,7 +1556,6 @@ section.visible {
     <div class="nav-brand">MAGI</div>
     <div class="nav-links">
       <a href="#evolution"><span data-lang-en>EVOLUTION</span><span data-lang-ko>진화</span><span data-lang-ja>進化</span></a>
-      <a href="#comparison"><span data-lang-en>VERSION</span><span data-lang-ko>버전</span><span data-lang-ja>バージョン</span></a>
       <a href="#philosophy"><span data-lang-en>PHILOSOPHY</span><span data-lang-ko>철학</span><span data-lang-ja>哲学</span></a>
       <a href="#pipeline"><span data-lang-en>PIPELINE</span><span data-lang-ko>파이프라인</span><span data-lang-ja>パイプライン</span></a>
       <a href="#gaps"><span data-lang-en>GAP ANALYSIS</span><span data-lang-ko>갭 분석</span><span data-lang-ja>ギャップ分析</span></a>
@@ -1506,9 +1612,9 @@ section.visible {
     <span data-lang-ja>進化のタイムライン</span>
   </h2>
   <p class="section-sub">
-    <span data-lang-en>From raw tooling to self-healing integrity — four generations of knowledge infrastructure.</span>
-    <span data-lang-ko>도구 구축에서 자가 치유 무결성까지 — 지식 인프라의 4세대 진화.</span>
-    <span data-lang-ja>ツール構築から自己修復型の整合性まで — 知識インフラ4世代の進化。</span>
+    <span data-lang-en>From raw tooling to autonomous self-evolution — five generations of knowledge infrastructure.</span>
+    <span data-lang-ko>도구 구축에서 자율적 자가 진화까지 — 지식 인프라의 5세대 진화.</span>
+    <span data-lang-ja>ツール構築から自律的な自己進化まで — 知識インフラ5世代の進化。</span>
   </p>
 
   <!-- EN -->
@@ -1552,6 +1658,7 @@ section.visible {
         <li>Hybrid search (SC+Pinecone)</li>
         <li>Codemap auto-detect</li>
       </ul>
+      <button class="evo-info-toggle" data-target="v3" type="button">View details</button>
     </div>
     <div class="evo-card" data-v="4">
       <div class="evo-dot"></div>
@@ -1568,6 +1675,21 @@ section.visible {
         <li>Size-based LLM routing</li>
         <li>L-19 Related title fix</li>
         <li>Legacy full cleanup</li>
+      </ul>
+      <button class="evo-info-toggle" data-target="v4" type="button">View details</button>
+    </div>
+    <div class="evo-card" data-v="5">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v5 — Self-Evolving</div>
+      <h3>Evolve Itself</h3>
+      <p class="evo-tagline">6-Stage Pipeline + Multi-LLM + AKI</p>
+      <ul>
+        <li>6-stage v3 PIPELINE (RESEARCH→KNOWLEDGIFY)</li>
+        <li>Multi-LLM consensus (Opus 4.7 + GPT-5.5 batch + tie-breaker)</li>
+        <li>Weekly cycle by day (Sat~Thu + Fri review)</li>
+        <li>POST-AUDIT 4 checks (graph / absorption / freshness / synthesis)</li>
+        <li>AKI — Agentic Knowledge Infrastructure</li>
+        <li>Sprint A.5 ✅ → B' ready (first cron May 16)</li>
       </ul>
     </div>
   </div>
@@ -1612,6 +1734,7 @@ section.visible {
         <li>하이브리드 검색 (SC+Pinecone)</li>
         <li>코드맵 자동 감지</li>
       </ul>
+      <button class="evo-info-toggle" data-target="v3" type="button">정보 보기</button>
     </div>
     <div class="evo-card" data-v="4">
       <div class="evo-dot"></div>
@@ -1628,6 +1751,21 @@ section.visible {
         <li>규모 기반 LLM 라우팅</li>
         <li>L-19 Related title 수정</li>
         <li>레거시 완전 제거</li>
+      </ul>
+      <button class="evo-info-toggle" data-target="v4" type="button">정보 보기</button>
+    </div>
+    <div class="evo-card" data-v="5">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v5 — 자가 진화</div>
+      <h3>스스로 진화하다</h3>
+      <p class="evo-tagline">6단계 파이프라인 + Multi-LLM + AKI</p>
+      <ul>
+        <li>6단계 v3 PIPELINE (RESEARCH→KNOWLEDGIFY)</li>
+        <li>Multi-LLM 합의 검증 (Opus 4.7 + GPT-5.5 batch + tie-breaker)</li>
+        <li>주간 cycle 요일별 분리 (토~목 + 금 검토)</li>
+        <li>POST-AUDIT 4 sub-check (그래프 / 흡수 / 신선도 / 합성)</li>
+        <li>AKI — 능동형 지식 인프라</li>
+        <li>Sprint A.5 ✅ → B' 진입 가능 (첫 cron 5-16)</li>
       </ul>
     </div>
   </div>
@@ -1672,6 +1810,7 @@ section.visible {
         <li>ハイブリッド検索（SC＋Pinecone）</li>
         <li>コードマップ自動検出</li>
       </ul>
+      <button class="evo-info-toggle" data-target="v3" type="button">詳細を見る</button>
     </div>
     <div class="evo-card" data-v="4">
       <div class="evo-dot"></div>
@@ -1689,94 +1828,92 @@ section.visible {
         <li>L-19 Relatedタイトル修正</li>
         <li>レガシー完全除去</li>
       </ul>
+      <button class="evo-info-toggle" data-target="v4" type="button">詳細を見る</button>
+    </div>
+    <div class="evo-card" data-v="5">
+      <div class="evo-dot"></div>
+      <div class="evo-ver">v5 — 自己進化</div>
+      <h3>みずから進化する</h3>
+      <p class="evo-tagline">6段階パイプライン + Multi-LLM + AKI</p>
+      <ul>
+        <li>6段階 v3 PIPELINE（RESEARCH→KNOWLEDGIFY）</li>
+        <li>Multi-LLM 合意検証（Opus 4.7 + GPT-5.5 batch + tie-breaker）</li>
+        <li>週次サイクル曜日別分離（土〜木 + 金レビュー）</li>
+        <li>POST-AUDIT 4サブチェック（グラフ / 吸収 / 鮮度 / シンセシス）</li>
+        <li>AKI — 能動型・知識インフラ</li>
+        <li>Sprint A.5 ✅ → B' 進入可能（初回cron 5-16）</li>
+      </ul>
     </div>
   </div>
-</section>
 
-<!-- ==================== 2. COMPARISON ==================== -->
-<section id="comparison">
-  <div class="section-label">Section 02</div>
-  <h2 class="section-heading">
-    <span data-lang-en>v3 vs v4 — Detailed Comparison</span>
-    <span data-lang-ko>v3 vs v4 — 상세 비교</span>
-    <span data-lang-ja>v3 vs v4 — 詳細比較</span>
-  </h2>
-  <p class="section-sub">
-    <span data-lang-en>From team autonomy to structural integrity.</span>
-    <span data-lang-ko>팀 자율 운영에서 구조적 무결성으로.</span>
-    <span data-lang-ja>チーム自律運用から構造的整合性へ。</span>
-  </p>
-
-  <!-- EN -->
-  <div class="compare-wrap" data-lang-en-grid>
-    <div class="compare-panel v3-panel">
-      <div class="compare-head"><span class="tag">V3</span> Team Autonomy (Self-Running)</div>
-      <div class="cmp-row"><span class="cmp-axis">Event-Driven</span><span class="cmp-detail">ingest&#8594;lint&#8594;curator-light 3-stage auto-chaining</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Incremental</span><span class="cmp-detail">git diff based — only changed files processed</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Feedback Loop</span><span class="cmp-detail">agent_log approval rate + autonomy tier transitions</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Resilience</span><span class="cmp-detail">retry_queue + channel_cooldown + fallback wiki-ization</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Search</span><span class="cmp-detail">SC (semantic) + Pinecone (metadata) hybrid merge</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Codemap</span><span class="cmp-detail">git diff 5-file threshold &#8594; Step 3.10 auto-suggest</span></div>
+  <!-- V3 / V4 Accordion Info Panels (replaces former Section 02) -->
+  <div class="evo-info-panels" data-lang-en-grid>
+    <div class="evo-info-panel" data-v="3">
+      <div class="evo-info-head"><span class="tag">V3</span> Team Autonomy (Self-Running)</div>
+      <div class="evo-info-row"><span class="axis">Event-Driven</span><span class="detail">ingest→lint→curator-light 3-stage auto-chaining</span></div>
+      <div class="evo-info-row"><span class="axis">Incremental</span><span class="detail">git diff based — only changed files processed</span></div>
+      <div class="evo-info-row"><span class="axis">Feedback Loop</span><span class="detail">agent_log approval rate + autonomy tier transitions</span></div>
+      <div class="evo-info-row"><span class="axis">Resilience</span><span class="detail">retry_queue + channel_cooldown + fallback wiki-ization</span></div>
+      <div class="evo-info-row"><span class="axis">Search</span><span class="detail">SC (semantic) + Pinecone (metadata) hybrid merge</span></div>
+      <div class="evo-info-row"><span class="axis">Codemap</span><span class="detail">git diff 5-file threshold → Step 3.10 auto-suggest</span></div>
     </div>
-    <div class="compare-panel v4-panel">
-      <div class="compare-head"><span class="tag">V4</span> Data Integrity (Gap-Sealing)</div>
-      <div class="cmp-row"><span class="cmp-axis">Embed Sync</span><span class="cmp-detail">--re-embed 3-path detection (committed+working+untracked), drift 0 baseline</span></div>
-      <div class="cmp-row"><span class="cmp-axis">URL Dedup</span><span class="cmp-detail">video_id based 3-route dedup (delta/url/discover)</span></div>
-      <div class="cmp-row"><span class="cmp-axis">LLM Classify</span><span class="cmp-detail">Channel inheritance &#8594; LLM content analysis, 402p re-classified (235 applied)</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Dup Merge</span><span class="cmp-detail">12-pair merge with reference migration + Pinecone sync</span></div>
-      <div class="cmp-row"><span class="cmp-axis">SCHEMA SSOT</span><span class="cmp-detail">All scripts derive from SCHEMA.md, ghost categories purged</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Graph Balance</span><span class="cmp-detail">A-18: Code Eng 43% &#8594; 3-axis balance (QA 27% / AI Infra 26% / Data 21%)</span></div>
-      <div class="cmp-row"><span class="cmp-axis">LLM Routing</span><span class="cmp-detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3-branch + two-step split</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Related Fix</span><span class="cmp-detail">742 ID&#8594;title corrections across 341 files + L-19 lint rule</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Legacy</span><span class="cmp-detail">13 scripts git rm + README modernized</span></div>
+    <div class="evo-info-panel" data-v="4">
+      <div class="evo-info-head"><span class="tag">V4</span> Data Integrity (Gap-Sealing)</div>
+      <div class="evo-info-row"><span class="axis">Embed Sync</span><span class="detail">--re-embed 3-path detection (committed+working+untracked), drift 0 baseline</span></div>
+      <div class="evo-info-row"><span class="axis">URL Dedup</span><span class="detail">video_id based 3-route dedup (delta/url/discover)</span></div>
+      <div class="evo-info-row"><span class="axis">LLM Classify</span><span class="detail">Channel inheritance → LLM content analysis, 402p re-classified (235 applied)</span></div>
+      <div class="evo-info-row"><span class="axis">Dup Merge</span><span class="detail">12-pair merge with reference migration + Pinecone sync</span></div>
+      <div class="evo-info-row"><span class="axis">SCHEMA SSOT</span><span class="detail">All scripts derive from SCHEMA.md, ghost categories purged</span></div>
+      <div class="evo-info-row"><span class="axis">Graph Balance</span><span class="detail">A-18: Code Eng 43% → 3-axis balance (QA 27% / AI Infra 26% / Data 21%)</span></div>
+      <div class="evo-info-row"><span class="axis">LLM Routing</span><span class="detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3-branch + two-step split</span></div>
+      <div class="evo-info-row"><span class="axis">Related Fix</span><span class="detail">742 ID→title corrections across 341 files + L-19 lint rule</span></div>
+      <div class="evo-info-row"><span class="axis">Legacy</span><span class="detail">13 scripts git rm + README modernized</span></div>
     </div>
   </div>
-  <!-- KO -->
-  <div class="compare-wrap" data-lang-ko-grid>
-    <div class="compare-panel v3-panel">
-      <div class="compare-head"><span class="tag">V3</span> 팀 자율 운영 (Self-Running)</div>
-      <div class="cmp-row"><span class="cmp-axis">이벤트 드리븐</span><span class="cmp-detail">ingest&#8594;lint&#8594;curator-light 3단계 자동 체이닝</span></div>
-      <div class="cmp-row"><span class="cmp-axis">증분 처리</span><span class="cmp-detail">git diff 기반 — 변경된 파일만 처리</span></div>
-      <div class="cmp-row"><span class="cmp-axis">피드백 루프</span><span class="cmp-detail">agent_log 승인율 + 자율 등급 전환</span></div>
-      <div class="cmp-row"><span class="cmp-axis">내성</span><span class="cmp-detail">retry_queue + 채널 쿨다운 + 폴백 위키화</span></div>
-      <div class="cmp-row"><span class="cmp-axis">검색</span><span class="cmp-detail">SC(시맨틱) + Pinecone(메타데이터) 하이브리드 병합</span></div>
-      <div class="cmp-row"><span class="cmp-axis">코드맵</span><span class="cmp-detail">git diff 5파일 임계 &#8594; Step 3.10 자동 제안</span></div>
+  <div class="evo-info-panels" data-lang-ko-grid>
+    <div class="evo-info-panel" data-v="3">
+      <div class="evo-info-head"><span class="tag">V3</span> 팀 자율 운영 (Self-Running)</div>
+      <div class="evo-info-row"><span class="axis">이벤트 드리븐</span><span class="detail">ingest→lint→curator-light 3단계 자동 체이닝</span></div>
+      <div class="evo-info-row"><span class="axis">증분 처리</span><span class="detail">git diff 기반 — 변경된 파일만 처리</span></div>
+      <div class="evo-info-row"><span class="axis">피드백 루프</span><span class="detail">agent_log 승인율 + 자율 등급 전환</span></div>
+      <div class="evo-info-row"><span class="axis">내성</span><span class="detail">retry_queue + 채널 쿨다운 + 폴백 위키화</span></div>
+      <div class="evo-info-row"><span class="axis">검색</span><span class="detail">SC(시맨틱) + Pinecone(메타데이터) 하이브리드 병합</span></div>
+      <div class="evo-info-row"><span class="axis">코드맵</span><span class="detail">git diff 5파일 임계 → Step 3.10 자동 제안</span></div>
     </div>
-    <div class="compare-panel v4-panel">
-      <div class="compare-head"><span class="tag">V4</span> 데이터 무결성 (Gap-Sealing)</div>
-      <div class="cmp-row"><span class="cmp-axis">임베딩 동기화</span><span class="cmp-detail">--re-embed 3경로 감지 (committed+working+untracked), drift 0 기준선</span></div>
-      <div class="cmp-row"><span class="cmp-axis">URL 중복제거</span><span class="cmp-detail">video_id 기반 3경로 중복 제거 (delta/url/discover)</span></div>
-      <div class="cmp-row"><span class="cmp-axis">LLM 분류</span><span class="cmp-detail">채널 상속 &#8594; LLM 콘텐츠 분석, 402p 재분류 (235건 반영)</span></div>
-      <div class="cmp-row"><span class="cmp-axis">중복 병합</span><span class="cmp-detail">12쌍 병합 + 참조 이관 + Pinecone 동기화</span></div>
-      <div class="cmp-row"><span class="cmp-axis">SCHEMA SSOT</span><span class="cmp-detail">모든 스크립트가 SCHEMA.md에서 파생, 유령 카테고리 제거</span></div>
-      <div class="cmp-row"><span class="cmp-axis">그래프 균형</span><span class="cmp-detail">A-18: Code Eng 43% &#8594; 3축 균형 (QA 27% / AI Infra 26% / Data 21%)</span></div>
-      <div class="cmp-row"><span class="cmp-axis">LLM 라우팅</span><span class="cmp-detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3분기 + two-step 분리</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Related 수정</span><span class="cmp-detail">341파일 742건 ID&#8594;title 교체 + L-19 린트 규칙</span></div>
-      <div class="cmp-row"><span class="cmp-axis">레거시</span><span class="cmp-detail">13개 스크립트 git rm + README 현대화</span></div>
+    <div class="evo-info-panel" data-v="4">
+      <div class="evo-info-head"><span class="tag">V4</span> 데이터 무결성 (Gap-Sealing)</div>
+      <div class="evo-info-row"><span class="axis">임베딩 동기화</span><span class="detail">--re-embed 3경로 감지 (committed+working+untracked), drift 0 기준선</span></div>
+      <div class="evo-info-row"><span class="axis">URL 중복제거</span><span class="detail">video_id 기반 3경로 중복 제거 (delta/url/discover)</span></div>
+      <div class="evo-info-row"><span class="axis">LLM 분류</span><span class="detail">채널 상속 → LLM 콘텐츠 분석, 402p 재분류 (235건 반영)</span></div>
+      <div class="evo-info-row"><span class="axis">중복 병합</span><span class="detail">12쌍 병합 + 참조 이관 + Pinecone 동기화</span></div>
+      <div class="evo-info-row"><span class="axis">SCHEMA SSOT</span><span class="detail">모든 스크립트가 SCHEMA.md에서 파생, 유령 카테고리 제거</span></div>
+      <div class="evo-info-row"><span class="axis">그래프 균형</span><span class="detail">A-18: Code Eng 43% → 3축 균형 (QA 27% / AI Infra 26% / Data 21%)</span></div>
+      <div class="evo-info-row"><span class="axis">LLM 라우팅</span><span class="detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3분기 + two-step 분리</span></div>
+      <div class="evo-info-row"><span class="axis">Related 수정</span><span class="detail">341파일 742건 ID→title 교체 + L-19 린트 규칙</span></div>
+      <div class="evo-info-row"><span class="axis">레거시</span><span class="detail">13개 스크립트 git rm + README 현대화</span></div>
     </div>
   </div>
-  <!-- JA -->
-  <div class="compare-wrap" data-lang-ja-grid>
-    <div class="compare-panel v3-panel">
-      <div class="compare-head"><span class="tag">V3</span> チーム自律運用（Self-Running）</div>
-      <div class="cmp-row"><span class="cmp-axis">イベント駆動</span><span class="cmp-detail">ingest&#8594;lint&#8594;curator-light 3段階の自動チェーニング</span></div>
-      <div class="cmp-row"><span class="cmp-axis">インクリメンタル</span><span class="cmp-detail">git diffベース — 変更ファイルのみ処理</span></div>
-      <div class="cmp-row"><span class="cmp-axis">フィードバックループ</span><span class="cmp-detail">agent_log 承認率 + 自律等級の遷移</span></div>
-      <div class="cmp-row"><span class="cmp-axis">レジリエンス</span><span class="cmp-detail">retry_queue + チャンネルクールダウン + フォールバックWiki化</span></div>
-      <div class="cmp-row"><span class="cmp-axis">検索</span><span class="cmp-detail">SC（セマンティック）+ Pinecone（メタデータ）ハイブリッド統合</span></div>
-      <div class="cmp-row"><span class="cmp-axis">コードマップ</span><span class="cmp-detail">git diff 5ファイル閾値 &#8594; Step 3.10 自動提案</span></div>
+  <div class="evo-info-panels" data-lang-ja-grid>
+    <div class="evo-info-panel" data-v="3">
+      <div class="evo-info-head"><span class="tag">V3</span> チーム自律運用（Self-Running）</div>
+      <div class="evo-info-row"><span class="axis">イベント駆動</span><span class="detail">ingest→lint→curator-light 3段階の自動チェーニング</span></div>
+      <div class="evo-info-row"><span class="axis">インクリメンタル</span><span class="detail">git diffベース — 変更ファイルのみ処理</span></div>
+      <div class="evo-info-row"><span class="axis">フィードバックループ</span><span class="detail">agent_log 承認率 + 自律等級の遷移</span></div>
+      <div class="evo-info-row"><span class="axis">レジリエンス</span><span class="detail">retry_queue + チャンネルクールダウン + フォールバックWiki化</span></div>
+      <div class="evo-info-row"><span class="axis">検索</span><span class="detail">SC（セマンティック）+ Pinecone（メタデータ）ハイブリッド統合</span></div>
+      <div class="evo-info-row"><span class="axis">コードマップ</span><span class="detail">git diff 5ファイル閾値 → Step 3.10 自動提案</span></div>
     </div>
-    <div class="compare-panel v4-panel">
-      <div class="compare-head"><span class="tag">V4</span> データ整合性（Gap-Sealing）</div>
-      <div class="cmp-row"><span class="cmp-axis">埋め込み同期</span><span class="cmp-detail">--re-embed 3経路検知（committed+working+untracked）、drift 0 基準線</span></div>
-      <div class="cmp-row"><span class="cmp-axis">URL重複排除</span><span class="cmp-detail">video_idベースの3経路重複排除（delta/url/discover）</span></div>
-      <div class="cmp-row"><span class="cmp-axis">LLM分類</span><span class="cmp-detail">チャンネル継承 &#8594; LLMコンテンツ解析、402p再分類（235件反映）</span></div>
-      <div class="cmp-row"><span class="cmp-axis">重複統合</span><span class="cmp-detail">12ペア統合 + 参照移行 + Pinecone同期</span></div>
-      <div class="cmp-row"><span class="cmp-axis">SCHEMA SSOT</span><span class="cmp-detail">全スクリプトがSCHEMA.mdから派生、ゴーストカテゴリ除去</span></div>
-      <div class="cmp-row"><span class="cmp-axis">グラフバランス</span><span class="cmp-detail">A-18: Code Eng 43% &#8594; 3軸均衡（QA 27% / AI Infra 26% / Data 21%）</span></div>
-      <div class="cmp-row"><span class="cmp-axis">LLMルーティング</span><span class="cmp-detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3分岐 + two-step分離</span></div>
-      <div class="cmp-row"><span class="cmp-axis">Related修正</span><span class="cmp-detail">341ファイル742件のID&#8594;title置換 + L-19 Lintルール</span></div>
-      <div class="cmp-row"><span class="cmp-axis">レガシー</span><span class="cmp-detail">13スクリプト git rm + README 刷新</span></div>
+    <div class="evo-info-panel" data-v="4">
+      <div class="evo-info-head"><span class="tag">V4</span> データ整合性（Gap-Sealing）</div>
+      <div class="evo-info-row"><span class="axis">埋め込み同期</span><span class="detail">--re-embed 3経路検知（committed+working+untracked）、drift 0 基準線</span></div>
+      <div class="evo-info-row"><span class="axis">URL重複排除</span><span class="detail">video_idベースの3経路重複排除（delta/url/discover）</span></div>
+      <div class="evo-info-row"><span class="axis">LLM分類</span><span class="detail">チャンネル継承 → LLMコンテンツ解析、402p再分類（235件反映）</span></div>
+      <div class="evo-info-row"><span class="axis">重複統合</span><span class="detail">12ペア統合 + 参照移行 + Pinecone同期</span></div>
+      <div class="evo-info-row"><span class="axis">SCHEMA SSOT</span><span class="detail">全スクリプトがSCHEMA.mdから派生、ゴーストカテゴリ除去</span></div>
+      <div class="evo-info-row"><span class="axis">グラフバランス</span><span class="detail">A-18: Code Eng 43% → 3軸均衡（QA 27% / AI Infra 26% / Data 21%）</span></div>
+      <div class="evo-info-row"><span class="axis">LLMルーティング</span><span class="detail">INC-027: &lt;5KB / 5-15KB / &gt;15KB 3分岐 + two-step分離</span></div>
+      <div class="evo-info-row"><span class="axis">Related修正</span><span class="detail">341ファイル742件のID→title置換 + L-19 Lintルール</span></div>
+      <div class="evo-info-row"><span class="axis">レガシー</span><span class="detail">13スクリプト git rm + README 刷新</span></div>
     </div>
   </div>
 </section>
@@ -3529,6 +3666,31 @@ v1：ツール（Tools） → v2：チーム（Team） → v3：自動化（Auto
       a.classList.toggle('active', a.getAttribute('href') === '#' + current);
     });
   }, { passive: true });
+})();
+
+// Evolution Info Panel Accordion (V3 / V4)
+(function() {
+  const toggles = document.querySelectorAll('.evo-info-toggle');
+  const containers = document.querySelectorAll('.evo-info-panels');
+  if (!toggles.length || !containers.length) return;
+
+  toggles.forEach(t => {
+    t.addEventListener('click', e => {
+      e.preventDefault();
+      const target = t.dataset.target;                  // 'v3' | 'v4'
+      const v = target.replace(/^v/, '');               // '3' | '4'
+      const panels = document.querySelectorAll('.evo-info-panel[data-v="' + v + '"]');
+      const allToggles = document.querySelectorAll('.evo-info-toggle[data-target="' + target + '"]');
+      const isOpen = panels.length > 0 && panels[0].classList.contains('open');
+      panels.forEach(p => p.classList.toggle('open', !isOpen));
+      allToggles.forEach(b => b.classList.toggle('active', !isOpen));
+      containers.forEach(c => {
+        const v3Open = c.querySelector('.evo-info-panel[data-v="3"].open');
+        const v4Open = c.querySelector('.evo-info-panel[data-v="4"].open');
+        c.classList.toggle('both-open', !!(v3Open && v4Open));
+      });
+    });
+  });
 })();
 </script>
 
