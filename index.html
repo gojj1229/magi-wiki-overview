@@ -475,6 +475,8 @@ section.visible {
   animation: gradientShift 8s ease infinite;
   filter: drop-shadow(0 0 36px var(--amber-glow));
 }
+/* EN headline is longest — shrink so it fits one line (KO/JA keep full size) */
+.hero h1 [data-lang-en] { font-size: clamp(1.4rem, 2.9vw, 2.5rem); }
 .hero-subtitle {
   font-size: 1.25rem;
   color: var(--text-dim);
@@ -498,9 +500,11 @@ section.visible {
   box-shadow: 0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
 }
 .stat {
+  flex: 1 1 0;
+  min-width: 0;
   background: var(--glass);
   backdrop-filter: blur(12px);
-  padding: 1.25rem 2.2rem;
+  padding: 1.25rem 1.5rem;
   text-align: center;
   position: relative;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1545,7 +1549,7 @@ section.visible {
   .stats-bar { flex-wrap: wrap; }
   .hero h1 { font-size: 2.5rem; }
   .section-heading { font-size: 2rem; }
-  .stat { padding: 1rem 1.25rem; }
+  .stat { padding: 1rem 1.25rem; flex: 0 1 auto; }
   .pipeline-flow { padding: 1.5rem; }
   .insight-block { padding: 2rem; }
 }
